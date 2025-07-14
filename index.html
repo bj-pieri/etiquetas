@@ -26,6 +26,26 @@
             border-bottom: 2px dashed #e5e7eb;
         }
 
+        /* --- CORREÇÃO AQUI --- */
+        /* Estilo da marca d'água para a etiqueta (tela e impressão) */
+        .etiqueta {
+            position: relative; /* Necessário para o posicionamento do pseudo-elemento */
+        }
+        .etiqueta::before {
+            content: '';
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            right: 5px;
+            bottom: 5px;
+            background-image: url('http://googleusercontent.com/file_content/1');
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: contain;
+            opacity: 0.1; /* Deixa a imagem bem apagada (marca d'água) */
+            z-index: 0; /* Coloca o fundo atrás do conteúdo */
+        }
+
 
         /* Estilos específicos para a impressão */
         @media print {
@@ -47,7 +67,6 @@
                 border: none;
             }
 
-            /* --- CORREÇÃO AQUI --- */
             /* Cada 'page-container' é um bloco de impressão */
             .page-container-print {
                 display: grid; 
@@ -160,7 +179,6 @@
                 return;
             }
             
-            // --- CORREÇÃO AQUI ---
             // Lógica para criar um container por página
             let currentPageContainer = null;
             const ETIQUETAS_POR_PAGINA = 6;
@@ -175,25 +193,29 @@
                     etiquetasContainer.appendChild(currentPageContainer);
                 }
 
+                // --- CORREÇÃO AQUI ---
+                // Conteúdo da etiqueta é envolvido por um div para ficar sobre a marca d'água
                 const etiquetaHTML = `
                     <div class="etiqueta bg-white rounded-lg p-3 border-2 border-gray-400 flex flex-col">
-                        <!-- Topo da Etiqueta -->
-                        <div class="flex justify-between items-start mb-2">
-                            <h3 class="text-xl font-bold w-3/4 leading-tight">${destinatario}</h3>
-                            <div class="volume-box bg-black text-white text-center p-1 px-3 rounded-md">
-                                <span class="font-bold text-xl">${i}/${volumes}</span>
+                        <div style="position: relative; z-index: 1; display: flex; flex-direction: column; height: 100%;">
+                            <!-- Topo da Etiqueta -->
+                            <div class="flex justify-between items-start mb-2">
+                                <h3 class="text-xl font-bold w-3/4 leading-tight">${destinatario}</h3>
+                                <div class="volume-box bg-black text-white text-center p-1 px-3 rounded-md">
+                                    <span class="font-bold text-xl">${i}/${volumes}</span>
+                                </div>
                             </div>
-                        </div>
 
-                        <!-- Meio da Etiqueta -->
-                        <div class="flex-grow">
-                            <p class="text-base"><span class="font-semibold">Pedido:</span> ${pedido}</p>
-                            <p class="text-base"><span class="font-semibold">Destino:</span> ${cidade}</p>
-                        </div>
+                            <!-- Meio da Etiqueta -->
+                            <div class="flex-grow">
+                                <p class="text-base"><span class="font-semibold">Pedido:</span> ${pedido}</p>
+                                <p class="text-base"><span class="font-semibold">Destino:</span> ${cidade}</p>
+                            </div>
 
-                        <!-- Rodapé da Etiqueta -->
-                        <div class="border-t-2 border-dashed border-gray-300 pt-1 text-center">
-                            <p class="font-semibold text-sm">Volume ${i} de ${volumes}</p>
+                            <!-- Rodapé da Etiqueta -->
+                            <div class="border-t-2 border-dashed border-gray-300 pt-1 text-center">
+                                <p class="font-semibold text-sm">Volume ${i} de ${volumes}</p>
+                            </div>
                         </div>
                     </div>
                 `;
