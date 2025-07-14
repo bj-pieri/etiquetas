@@ -3,554 +3,164 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gerador de Etiquetas de Despacho</title>
-    
+    <title>Gerador de Etiquetas para Despacho</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* --- General Resets & Font --- */
-        :root {
-            --primary-color: #2563eb;
-            --primary-color-hover: #1d4ed8;
-            --card-bg: #ffffff;
-            --body-bg: linear-gradient(to bottom right, #dbeafe, #e0e7ff);
-            --text-primary: #111827;
-            --text-secondary: #6b7280;
-            --border-color: #e5e7eb;
-            --input-border: #d1d5db;
-        }
+        /* Estilos gerais com Tailwind, mas com algumas adições */
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            margin: 0;
-            background: var(--body-bg);
-            color: var(--text-primary);
-            min-height: 100vh;
-            padding: 16px;
-            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
         }
 
-        /* --- Main Layout --- */
-        .container {
-            max-width: 1280px;
-            margin: 0 auto;
-        }
-        .header {
-            text-align: center;
-            margin-bottom: 32px;
-        }
-        .header h1 {
-            font-size: 2.25rem;
-            font-weight: bold;
-            margin-bottom: 8px;
-            color: var(--text-primary);
-        }
-        .header p {
-            color: var(--text-secondary);
-            margin: 0;
-        }
-        .main-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 32px;
-        }
-        @media (min-width: 1024px) {
-            .main-grid {
-                grid-template-columns: 1fr 2fr;
-            }
-        }
-        
-        /* --- Card Component --- */
-        .card {
-            background-color: var(--card-bg);
-            border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1);
-        }
-        .card-header {
-            padding: 24px;
-            border-bottom: 1px solid var(--border-color);
-        }
-        .card-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .card-description {
-            color: var(--text-secondary);
-            margin-top: 4px;
-        }
-        .card-content {
-            padding: 24px;
-        }
-        
-        /* --- Form Elements --- */
-        .form-group {
-            margin-bottom: 16px;
-        }
-        .label {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-weight: 500;
-            margin-bottom: 8px;
-        }
-        .input {
-            width: 100%;
-            padding: 10px 12px;
-            border: 1px solid var(--input-border);
-            border-radius: 6px;
-            box-sizing: border-box;
-            transition: border-color 0.2s, box-shadow 0.2s;
-        }
-        .input:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
-        }
-        
-        /* --- Button Component --- */
-        .button {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 10px 18px;
-            border-radius: 6px;
-            font-weight: 600;
-            border: 1px solid transparent;
-            cursor: pointer;
-            transition: background-color 0.2s, border-color 0.2s;
-            white-space: nowrap;
-        }
-        .button-primary {
-            background-color: var(--primary-color);
-            color: white;
-        }
-        .button-primary:hover {
-            background-color: var(--primary-color-hover);
-        }
-        .button-outline {
-            background-color: transparent;
-            border-color: var(--input-border);
-            color: var(--text-primary);
-        }
-        .button-outline:hover {
-            background-color: #f9fafb;
-        }
-        .button:disabled {
-            cursor: not-allowed;
-            opacity: 0.6;
-        }
-        .button-group {
-            display: flex;
-            gap: 12px;
-            margin-top: 16px;
-        }
-        .flex-1 {
-            flex: 1;
-        }
-
-        /* --- Icon Styles --- */
-        .icon {
-            width: 16px;
-            height: 16px;
-        }
-        .icon-lg {
-            width: 20px;
-            height: 20px;
-        }
-        .icon-xl {
-            width: 64px;
-            height: 64px;
-            margin: 0 auto 16px auto;
-            opacity: 0.5;
-        }
-
-        /* --- Etiqueta Display --- */
-        .etiquetas-placeholder {
-            text-align: center;
-            padding: 48px 0;
-            color: var(--text-secondary);
-        }
-        .etiquetas-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 16px;
-            max-height: 420px;
-            overflow-y: auto;
-            padding: 4px;
-        }
-        .etiqueta-preview {
-            border: 2px solid var(--input-border);
-            border-radius: 8px;
-            padding: 20px;
-            background-color: white;
-            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            min-height: 180px;
-        }
-        .etiqueta-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 16px;
-        }
-        .etiqueta-logo-img {
-            width: 120px;
-            height: auto;
-        }
-        .etiqueta-volume-badge {
-            background-color: #dbeafe;
-            color: #1e40af;
-            padding: 6px 12px;
-            border-radius: 9999px;
-            font-size: 16px;
-            font-weight: bold;
-        }
-        .etiqueta-destinatario {
-            font-weight: bold;
-            font-size: 20px;
-            color: var(--text-primary);
-            margin: 0 0 16px 0;
-            word-break: break-word;
-        }
-        .etiqueta-info-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 8px;
-            font-size: 14px;
-        }
-        .etiqueta-info-item strong {
-            font-weight: 500;
-        }
-        .etiqueta-info-item .mono {
-            font-family: monospace;
-        }
-        .etiqueta-info-item .icon {
-            color: var(--text-secondary);
-        }
-
-        /* --- Print Specific Styles --- */
-        .print-only {
-            display: none;
-        }
+        /* Estilos específicos para a impressão */
         @media print {
-            body {
-                padding: 0;
-                background: none;
-            }
+            /* Esconde o formulário, o cabeçalho e os botões ao imprimir */
             .no-print {
                 display: none !important;
             }
-            .print-only {
-                display: block;
+
+            /* Garante que a área de etiquetas ocupe toda a página */
+            body {
+                margin: 0;
+                padding: 0;
+                background-color: #fff;
             }
-            @page {
-                size: A4;
-                margin: 10mm;
+            
+            #etiquetas-container {
+                margin: 0;
+                padding: 1cm; /* Margem da página A4 */
+                width: auto;
+                box-shadow: none;
+                border: none;
             }
-            .etiquetas-print-container {
-                display: grid !important;
-                grid-template-columns: repeat(2, 1fr) !important;
-                gap: 10mm 5mm !important;
-            }
-            .etiqueta-print-item {
-                width: 9.5cm !important;
-                height: 6.5cm !important;
-                border: 1.5px solid #000 !important;
-                padding: 15px !important;
-                page-break-inside: avoid !important;
-                display: flex !important;
-                flex-direction: column !important;
-                justify-content: space-between !important;
-                box-sizing: border-box !important;
-                background-color: white !important;
-            }
-            .etiqueta-print-header {
-                display: flex !important;
-                justify-content: space-between !important;
-                align-items: flex-start !important;
-                margin-bottom: 10px !important;
-            }
-            .etiqueta-print-logo {
-                width: 100px !important;
-                height: auto !important;
-            }
-            .etiqueta-print-volume {
-                background: #000 !important;
-                color: #fff !important;
-                padding: 6px 10px !important;
-                border-radius: 4px !important;
-                font-size: 14px !important;
-                font-weight: bold !important;
-            }
-            .etiqueta-print-nome {
-                font-weight: bold !important;
-                font-size: 20px !important;
-                color: #000 !important;
-                margin: 0 0 12px 0 !important;
-                line-height: 1.2 !important;
-                word-break: break-word;
-            }
-            .etiqueta-print-info {
-                font-size: 15px !important;
-                margin-bottom: 6px !important;
-            }
-            .etiqueta-print-footer {
-                border-top: 2px dashed #888 !important;
-                padding-top: 6px !important;
-                margin-top: 12px !important;
-                font-size: 11px !important;
-                color: #555 !important;
-                text-align: center !important;
+
+            /* Estilo da etiqueta para impressão */
+            .etiqueta {
+                border: 2px solid #000;
+                page-break-inside: avoid; /* Evita que a etiqueta seja cortada entre páginas */
+                break-inside: avoid;
+                box-shadow: none;
             }
         }
     </style>
 </head>
-<body>
+<body class="bg-gray-100 text-gray-800">
 
-    <svg width="0" height="0" style="display:none;">
-        <symbol id="icon-package" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16.5 9.4l-9-5.19"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="m3.29 7 8.71 5 8.71-5"/><path d="M12 22V12"/></symbol>
-        <symbol id="icon-file-text" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></symbol>
-        <symbol id="icon-map-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></symbol>
-        <symbol id="icon-hash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/></symbol>
-        <symbol id="icon-printer" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></symbol>
-    </svg>
-
-    <div class="container no-print">
-        <header class="header">
-            <h1>Gerador de Etiquetas de Despacho</h1>
-            <p>Sistema para geração automática de etiquetas de envio</p>
+    <div class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+        
+        <!-- Cabeçalho e formulário - não serão impressos -->
+        <header class="mb-8 no-print">
+            <h1 class="text-3xl font-bold text-gray-900">Gerador de Etiquetas</h1>
+            <p class="mt-2 text-gray-600">Preencha os dados abaixo para criar as etiquetas de despacho.</p>
         </header>
 
-        <div class="main-grid">
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title">
-                        <svg class="icon-lg"><use href="#icon-file-text"></use></svg>
-                        Dados do Pedido
-                    </h2>
-                    <p class="card-description">Preencha as informações para gerar as etiquetas</p>
-                </div>
-                <div class="card-content">
-                    <form id="etiquetaForm">
-                        <div class="form-group">
-                            <label for="nomeDestinatario" class="label">
-                                <svg class="icon"><use href="#icon-package"></use></svg>
-                                Nome do Destinatário
-                            </label>
-                            <input class="input" id="nomeDestinatario" name="nomeDestinatario" placeholder="Digite o nome completo do destinatário" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="numeroPedido" class="label">
-                                <svg class="icon"><use href="#icon-hash"></use></svg>
-                                Número do Pedido
-                            </label>
-                            <input class="input" id="numeroPedido" name="numeroPedido" placeholder="Ex: PED-2024-001" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="cidadeDestino" class="label">
-                                <svg class="icon"><use href="#icon-map-pin"></use></svg>
-                                Cidade de Destino
-                            </label>
-                            <input class="input" id="cidadeDestino" name="cidadeDestino" placeholder="Digite a cidade de destino" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="volume" class="label">
-                                <svg class="icon"><use href="#icon-package"></use></svg>
-                                Quantidade de Volumes
-                            </label>
-                            <input class="input" id="volume" name="volume" type="number" min="1" placeholder="Ex: 6" required>
-                        </div>
-                        <div class="button-group">
-                            <button type="submit" class="button button-primary flex-1">Gerar Etiquetas</button>
-                            <button type="button" id="limparBtn" class="button button-outline">Limpar</button>
-                        </div>
-                    </form>
-                </div>
+        <main class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Coluna do Formulário -->
+            <div class="md:col-span-1 no-print">
+                <form id="form-etiqueta" class="bg-white p-6 rounded-lg shadow-md space-y-4">
+                    <div>
+                        <label for="destinatario" class="block text-sm font-medium text-gray-700">Nome do Destinatário</label>
+                        <input type="text" id="destinatario" name="destinatario" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="João da Silva">
+                    </div>
+                    <div>
+                        <label for="pedido" class="block text-sm font-medium text-gray-700">Número do Pedido</label>
+                        <input type="text" id="pedido" name="pedido" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="PED-12345">
+                    </div>
+                    <div>
+                        <label for="cidade" class="block text-sm font-medium text-gray-700">Cidade de Destino</label>
+                        <input type="text" id="cidade" name="cidade" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="São Paulo - SP">
+                    </div>
+                    <div>
+                        <label for="volumes" class="block text-sm font-medium text-gray-700">Quantidade de Volumes</label>
+                        <input type="number" id="volumes" name="volumes" required min="1" value="1" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                    </div>
+                    <div class="pt-4 space-y-3">
+                         <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            Gerar Etiquetas
+                        </button>
+                        <button type="button" id="btn-imprimir" class="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" disabled>
+                            Imprimir Etiquetas
+                        </button>
+                    </div>
+                </form>
             </div>
 
-            <div>
-                <div class="card">
-                    <div class="card-header">
-                        <h2 class="card-title">
-                            <svg class="icon-lg"><use href="#icon-package"></use></svg>
-                            Etiquetas Geradas
-                        </h2>
-                        <p class="card-description" id="etiquetasStatus">As etiquetas aparecerão aqui após o preenchimento do formulário</p>
-                    </div>
-                    <div class="card-content">
-                        <div id="etiquetasPreviewContainer">
-                            <div class="etiquetas-placeholder">
-                                <svg class="icon-xl"><use href="#icon-package"></use></svg>
-                                <p>Nenhuma etiqueta gerada ainda</p>
-                            </div>
-                        </div>
-                        <div id="actionButtonsContainer" style="display: none; border-top: 1px solid var(--border-color); padding-top: 24px; margin-top: 16px;">
-                            <button id="imprimirBtn" class="button button-primary flex-1">
-                                <svg class="icon" style="margin-right: 8px;"><use href="#icon-printer"></use></svg>
-                                Imprimir Etiquetas
-                            </button>
-                        </div>
+            <!-- Coluna de Visualização das Etiquetas -->
+            <div class="md:col-span-2">
+                <div id="etiquetas-container" class="bg-white p-6 rounded-lg shadow-inner min-h-[300px] grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <!-- As etiquetas geradas aparecerão aqui -->
+                    <div id="placeholder" class="col-span-full flex items-center justify-center text-gray-400">
+                        As etiquetas geradas aparecerão aqui para visualização.
                     </div>
                 </div>
             </div>
-        </div>
+        </main>
+
     </div>
 
-    <div id="etiquetasPrintContainer" class="print-only"></div>
-
-
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // --- State ---
-            let formData = {
-                nomeDestinatario: '',
-                numeroPedido: '',
-                cidadeDestino: '',
-                volume: ''
-            };
-            let etiquetas = [];
+        // Seleciona os elementos do DOM
+        const form = document.getElementById('form-etiqueta');
+        const etiquetasContainer = document.getElementById('etiquetas-container');
+        const placeholder = document.getElementById('placeholder');
+        const btnImprimir = document.getElementById('btn-imprimir');
 
-            // --- DOM Elements ---
-            const form = document.getElementById('etiquetaForm');
-            const inputs = form.querySelectorAll('input');
-            const limparBtn = document.getElementById('limparBtn');
-            const etiquetasPreviewContainer = document.getElementById('etiquetasPreviewContainer');
-            const etiquetasPrintContainer = document.getElementById('etiquetasPrintContainer');
-            const etiquetasStatus = document.getElementById('etiquetasStatus');
-            const actionButtonsContainer = document.getElementById('actionButtonsContainer');
-            const imprimirBtn = document.getElementById('imprimirBtn');
+        // Adiciona o listener de evento para o formulário
+        form.addEventListener('submit', function(event) {
+            // Previne o comportamento padrão de recarregar a página
+            event.preventDefault();
 
-            // A simple placeholder logo (encoded in Base64)
-            const logoBase64 = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgNTAiPjxkZWZzPjxsaW5lYXJHcmFkaWVudCBpZD0iZyIgeDE9IjAlIiB5MT0iMCUiIHgyPSIxMDAlIiB5Mj0iMTAwJSI+PHN0b3Agb2Zmc2V0PSIwJSIgc3R5bGU9InN0b3AtY29sb3I6IzI1NjNlYiIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3R5bGU9InN0b3AtY29sb3I6IzdmYThmYyIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iNTAiIHJ4PSI4IiBmaWxsPSJ1cmwoI2cpIi8+PHRleHQgeD0iMTAwIiB5PSIzMiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjI0IiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0id2hpdGUiPkxPR08gQVFVSTwvdGV4dD48L3N2Zz4=';
+            // Limpa o container de etiquetas antes de gerar novas
+            etiquetasContainer.innerHTML = '';
 
+            // Pega os valores dos campos do formulário
+            const destinatario = document.getElementById('destinatario').value;
+            const pedido = document.getElementById('pedido').value;
+            const cidade = document.getElementById('cidade').value;
+            const volumes = parseInt(document.getElementById('volumes').value, 10);
 
-            // --- Functions ---
-            const updateFormData = () => {
-                inputs.forEach(input => {
-                    formData[input.name] = input.value;
-                });
-            };
+            // Validação simples
+            if (!destinatario || !pedido || !cidade || isNaN(volumes) || volumes < 1) {
+                etiquetasContainer.innerHTML = '<div class="col-span-full flex items-center justify-center text-red-500">Por favor, preencha todos os campos corretamente.</div>';
+                btnImprimir.disabled = true;
+                return;
+            }
 
-            const renderEtiquetas = () => {
-                etiquetasPreviewContainer.innerHTML = '';
-                etiquetasPrintContainer.innerHTML = '';
-
-                if (etiquetas.length === 0) {
-                    etiquetasPreviewContainer.innerHTML = `
-                        <div class="etiquetas-placeholder">
-                            <svg class="icon-xl"><use href="#icon-package"></use></svg>
-                            <p>Nenhuma etiqueta gerada ainda</p>
-                        </div>`;
-                    etiquetasStatus.textContent = 'As etiquetas aparecerão aqui após o preenchimento do formulário';
-                    actionButtonsContainer.style.display = 'none';
-                    return;
-                }
-
-                // Update status text and show action buttons
-                etiquetasStatus.textContent = `${etiquetas.length} etiqueta(s) pronta(s) para impressão.`;
-                actionButtonsContainer.style.display = 'block';
-
-                // Render for screen view
-                const screenGrid = document.createElement('div');
-                screenGrid.className = 'etiquetas-grid';
-                etiquetas.forEach(et => {
-                    screenGrid.innerHTML += `
-                        <div class="etiqueta-preview">
-                            <div>
-                                <div class="etiqueta-header">
-                                    <img src="${logoBase64}" alt="Logo" class="etiqueta-logo-img" />
-                                    <span class="etiqueta-volume-badge">${et.volumeAtual}/${et.volumeTotal}</span>
-                                </div>
-                                <h3 class="etiqueta-destinatario">${et.nomeDestinatario}</h3>
-                                <div class="etiqueta-info">
-                                    <div class="etiqueta-info-item">
-                                        <svg class="icon"><use href="#icon-hash"></use></svg>
-                                        <strong>Pedido:</strong>
-                                        <span class="mono">${et.numeroPedido}</span>
-                                    </div>
-                                    <div class="etiqueta-info-item">
-                                        <svg class="icon"><use href="#icon-map-pin"></use></svg>
-                                        <strong>Destino:</strong>
-                                        <span>${et.cidadeDestino}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>`;
-                });
-                etiquetasPreviewContainer.appendChild(screenGrid);
-
-                // Render for print view
-                const printGrid = document.createElement('div');
-                printGrid.className = 'etiquetas-print-container';
-                 etiquetas.forEach(et => {
-                    printGrid.innerHTML += `
-                    <div class="etiqueta-print-item">
+            // Loop para criar cada etiqueta dinamicamente
+            for (let i = 1; i <= volumes; i++) {
+                const etiquetaHTML = `
+                    <div class="etiqueta bg-white rounded-lg p-4 border-2 border-dashed border-gray-300 flex flex-col justify-between h-64">
                         <div>
-                            <div class="etiqueta-print-header">
-                                <img src="${logoBase64}" alt="Logo" class="etiqueta-print-logo" />
-                                <div class="etiqueta-print-volume">${et.volumeAtual}/${et.volumeTotal}</div>
-                            </div>
-                            <h3 class="etiqueta-print-nome">${et.nomeDestinatario}</h3>
-                            <div class="etiqueta-print-info"><strong>Pedido:</strong> ${et.numeroPedido}</div>
-                            <div class="etiqueta-print-info"><strong>Destino:</strong> ${et.cidadeDestino}</div>
+                            <h3 class="text-lg font-bold border-b border-gray-200 pb-2 mb-2">DESTINATÁRIO</h3>
+                            <p class="text-xl font-semibold">${destinatario}</p>
+                            <p class="text-sm text-gray-600">${cidade}</p>
                         </div>
-                        <div class="etiqueta-print-footer">Volume ${et.volumeAtual} de ${et.volumeTotal}</div>
-                    </div>`;
-                });
-                etiquetasPrintContainer.appendChild(printGrid);
-            };
+                        <div>
+                            <p class="text-sm text-gray-500">Pedido:</p>
+                            <p class="font-mono text-base">${pedido}</p>
+                        </div>
+                        <div class="text-center bg-gray-100 rounded-md p-2 mt-2">
+                            <span class="text-2xl font-bold">VOLUME</span>
+                            <p class="text-4xl font-bold">${i}/${volumes}</p>
+                        </div>
+                    </div>
+                `;
+                // Adiciona a etiqueta gerada ao container
+                etiquetasContainer.insertAdjacentHTML('beforeend', etiquetaHTML);
+            }
 
-            const gerarEtiquetas = () => {
-                updateFormData();
-                const { nomeDestinatario, numeroPedido, cidadeDestino, volume } = formData;
-                
-                const numeroVolume = parseInt(volume);
-                if (isNaN(numeroVolume) || numeroVolume <= 0) {
-                    alert('Por favor, insira um número válido para a quantidade de volumes.');
-                    return;
-                }
-                
-                const novasEtiquetas = [];
-                for (let i = 1; i <= numeroVolume; i++) {
-                    novasEtiquetas.push({
-                        id: i,
-                        nomeDestinatario,
-                        numeroPedido,
-                        cidadeDestino,
-                        volumeAtual: i,
-                        volumeTotal: numeroVolume
-                    });
-                }
-                etiquetas = novasEtiquetas;
-                renderEtiquetas();
-            };
-
-            const limparFormulario = () => {
-                form.reset();
-                etiquetas = [];
-                updateFormData();
-                renderEtiquetas();
-            };
-            
-            const imprimirEtiquetas = () => {
-                if (etiquetas.length === 0) {
-                    alert('Nenhuma etiqueta para imprimir!');
-                    return;
-                }
-                window.print();
-            };
-
-            // --- Event Listeners ---
-            form.addEventListener('submit', (e) => {
-                e.preventDefault();
-                gerarEtiquetas();
-            });
-            limparBtn.addEventListener('click', limparFormulario);
-            imprimirBtn.addEventListener('click', imprimirEtiquetas);
+            // Habilita o botão de impressão
+            btnImprimir.disabled = false;
         });
+
+        // Adiciona o listener de evento para o botão de impressão
+        btnImprimir.addEventListener('click', function() {
+            // Chama a função de impressão do navegador
+            window.print();
+        });
+
     </script>
 </body>
 </html>
