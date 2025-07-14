@@ -28,15 +28,15 @@
                 background-color: #fff;
             }
             
-            /* Layout em grade para impressão com espaçamento e centralização */
+            /* --- CORREÇÃO AQUI --- */
+            /* Layout em grade para impressão com centralização robusta */
             #etiquetas-container {
                 display: grid; /* Usando grid como solicitado */
                 grid-template-columns: repeat(2, 8.5cm); /* Duas colunas com o tamanho exato da etiqueta */
                 gap: 0.5cm; /* Espaçamento entre as etiquetas (horizontal e vertical) */
-                justify-content: center; /* Centraliza a grade na página */
-                margin: 0;
-                padding: 1cm; /* Margem da página A4 */
-                width: auto;
+                width: fit-content; /* Garante que o container tenha a largura do conteúdo */
+                margin: 1cm auto; /* Centraliza o container na página (vertical e horizontalmente) */
+                padding: 0; /* Padding não é mais necessário com a margem */
                 box-shadow: none;
                 border: none;
             }
@@ -53,7 +53,6 @@
                 overflow: hidden; /* Garante que o conteúdo não vaze */
             }
 
-            /* --- CORREÇÃO AQUI --- */
             /* Força uma quebra de página após cada 6ª etiqueta */
             .etiqueta:nth-child(6n) {
                 page-break-after: always;
