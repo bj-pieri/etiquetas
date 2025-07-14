@@ -28,12 +28,12 @@
                 background-color: #fff;
             }
             
-            /* --- CORREÇÃO AQUI --- */
-            /* Layout em grade para impressão com espaçamento */
+            /* Layout em grade para impressão com espaçamento e centralização */
             #etiquetas-container {
                 display: grid; /* Usando grid como solicitado */
                 grid-template-columns: repeat(2, 8.5cm); /* Duas colunas com o tamanho exato da etiqueta */
                 gap: 0.5cm; /* Espaçamento entre as etiquetas (horizontal e vertical) */
+                justify-content: center; /* Centraliza a grade na página */
                 margin: 0;
                 padding: 1cm; /* Margem da página A4 */
                 width: auto;
@@ -51,6 +51,12 @@
                 width: 8.5cm !important;
                 height: 4.5cm !important;
                 overflow: hidden; /* Garante que o conteúdo não vaze */
+            }
+
+            /* --- CORREÇÃO AQUI --- */
+            /* Força uma quebra de página após cada 6ª etiqueta */
+            .etiqueta:nth-child(6n) {
+                page-break-after: always;
             }
             
             /* Força o navegador a imprimir a cor de fundo da caixa de volume */
