@@ -28,12 +28,12 @@
                 background-color: #fff;
             }
             
+            /* --- CORREÇÃO AQUI --- */
+            /* Layout em grade para impressão com espaçamento */
             #etiquetas-container {
-                display: flex;
-                flex-wrap: wrap;
-                justify-content: flex-start;
-                align-content: flex-start;
-                gap: 0; /* Remove o gap na impressão para controle preciso */
+                display: grid; /* Usando grid como solicitado */
+                grid-template-columns: repeat(2, 8.5cm); /* Duas colunas com o tamanho exato da etiqueta */
+                gap: 0.5cm; /* Espaçamento entre as etiquetas (horizontal e vertical) */
                 margin: 0;
                 padding: 1cm; /* Margem da página A4 */
                 width: auto;
@@ -47,7 +47,6 @@
                 page-break-inside: avoid; /* Evita que a etiqueta seja cortada entre páginas */
                 break-inside: avoid;
                 box-shadow: none;
-                /* --- CORREÇÃO AQUI --- */
                 /* Define o tamanho exato da etiqueta para impressão */
                 width: 8.5cm !important;
                 height: 4.5cm !important;
