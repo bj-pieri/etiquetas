@@ -14,6 +14,19 @@
             font-family: 'Inter', sans-serif;
         }
 
+        /* Estilo para o container de visualização na tela */
+        .page-container-screen {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        .page-container-screen:not(:last-child) {
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px dashed #e5e7eb;
+        }
+
+
         /* Estilos específicos para a impressão */
         @media print {
             /* Esconde o formulário, o cabeçalho e os botões ao imprimir */
@@ -28,41 +41,39 @@
                 background-color: #fff;
             }
             
-            /* --- CORREÇÃO AQUI --- */
-            /* Layout em grade para impressão com centralização robusta */
             #etiquetas-container {
-                display: grid; /* Usando grid como solicitado */
-                grid-template-columns: repeat(2, 8.5cm); /* Duas colunas com o tamanho exato da etiqueta */
-                gap: 0.5cm; /* Espaçamento entre as etiquetas (horizontal e vertical) */
-                width: fit-content; /* Garante que o container tenha a largura do conteúdo */
-                margin: 1cm auto; /* Centraliza o container na página (vertical e horizontalmente) */
-                padding: 0; /* Padding não é mais necessário com a margem */
+                padding: 0;
                 box-shadow: none;
                 border: none;
+            }
+
+            /* --- CORREÇÃO AQUI --- */
+            /* Cada 'page-container' é um bloco de impressão */
+            .page-container-print {
+                display: grid; 
+                grid-template-columns: repeat(2, 8.5cm); 
+                gap: 0.5cm; 
+                width: fit-content; 
+                margin: 1cm auto; /* Centraliza a grade na página */
+                page-break-after: always; /* Quebra a página após este container */
             }
 
             /* Estilo da etiqueta para impressão, seguindo o modelo da foto */
             .etiqueta {
                 border: 2px solid #000 !important;
-                page-break-inside: avoid; /* Evita que a etiqueta seja cortada entre páginas */
+                page-break-inside: avoid; 
                 break-inside: avoid;
                 box-shadow: none;
-                /* Define o tamanho exato da etiqueta para impressão */
                 width: 8.5cm !important;
                 height: 4.5cm !important;
-                overflow: hidden; /* Garante que o conteúdo não vaze */
-            }
-
-            /* Força uma quebra de página após cada 6ª etiqueta */
-            .etiqueta:nth-child(6n) {
-                page-break-after: always;
+                overflow: hidden; 
             }
             
             /* Força o navegador a imprimir a cor de fundo da caixa de volume */
             .volume-box {
                 -webkit-print-color-adjust: exact !important;
                 color-adjust: exact !important;
-                background-color: #000 !important; /* Garante a cor de fundo */
+                background-color: #000 !important; 
             }
         }
     </style>
@@ -110,9 +121,9 @@
 
             <!-- Coluna de Visualização das Etiquetas -->
             <div class="md:col-span-2">
-                <div id="etiquetas-container" class="bg-white p-6 rounded-lg shadow-inner min-h-[300px] grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div id="etiquetas-container" class="bg-white p-6 rounded-lg shadow-inner min-h-[300px]">
                     <!-- As etiquetas geradas aparecerão aqui -->
-                    <div id="placeholder" class="col-span-full flex items-center justify-center text-gray-400">
+                    <div id="placeholder" class="col-span-full flex items-center justify-center text-gray-400 h-full">
                         As etiquetas geradas aparecerão aqui para visualização.
                     </div>
                 </div>
@@ -148,14 +159,25 @@
                 btnImprimir.disabled = true;
                 return;
             }
+            
+            // --- CORREÇÃO AQUI ---
+            // Lógica para criar um container por página
+            let currentPageContainer = null;
+            const ETIQUETAS_POR_PAGINA = 6;
 
             // Loop para criar cada etiqueta dinamicamente
             for (let i = 1; i <= volumes; i++) {
-                // Removida a classe h-52 para não conflitar com a altura da impressão
+                // Cria um novo container de página a cada 6 etiquetas
+                if ((i - 1) % ETIQUETAS_POR_PAGINA === 0) {
+                    currentPageContainer = document.createElement('div');
+                    // Adiciona classes para estilização na tela e na impressão
+                    currentPageContainer.classList.add('page-container-screen', 'page-container-print');
+                    etiquetasContainer.appendChild(currentPageContainer);
+                }
+
                 const etiquetaHTML = `
                     <div class="etiqueta bg-white rounded-lg p-3 border-2 border-gray-400 flex flex-col">
                         <!-- Topo da Etiqueta -->
-                        <!-- Espaçamento ajustado para a nova altura -->
                         <div class="flex justify-between items-start mb-2">
                             <h3 class="text-xl font-bold w-3/4 leading-tight">${destinatario}</h3>
                             <div class="volume-box bg-black text-white text-center p-1 px-3 rounded-md">
@@ -175,8 +197,8 @@
                         </div>
                     </div>
                 `;
-                // Adiciona a etiqueta gerada ao container
-                etiquetasContainer.insertAdjacentHTML('beforeend', etiquetaHTML);
+                // Adiciona a etiqueta gerada ao container da página atual
+                currentPageContainer.insertAdjacentHTML('beforeend', etiquetaHTML);
             }
 
             // Habilita o botão de impressão
