@@ -29,12 +29,16 @@
             }
             
             #etiquetas-container {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: flex-start;
+                align-content: flex-start;
+                gap: 0; /* Remove o gap na impressão para controle preciso */
                 margin: 0;
                 padding: 1cm; /* Margem da página A4 */
                 width: auto;
                 box-shadow: none;
                 border: none;
-                grid-template-columns: repeat(2, 1fr); /* Força 2 colunas na impressão */
             }
 
             /* Estilo da etiqueta para impressão, seguindo o modelo da foto */
@@ -43,9 +47,13 @@
                 page-break-inside: avoid; /* Evita que a etiqueta seja cortada entre páginas */
                 break-inside: avoid;
                 box-shadow: none;
+                /* --- CORREÇÃO AQUI --- */
+                /* Define o tamanho exato da etiqueta para impressão */
+                width: 8.5cm !important;
+                height: 4.5cm !important;
+                overflow: hidden; /* Garante que o conteúdo não vaze */
             }
             
-            /* --- CORREÇÃO AQUI --- */
             /* Força o navegador a imprimir a cor de fundo da caixa de volume */
             .volume-box {
                 -webkit-print-color-adjust: exact !important;
@@ -139,13 +147,13 @@
 
             // Loop para criar cada etiqueta dinamicamente
             for (let i = 1; i <= volumes; i++) {
-                // *** TEMPLATE DA ETIQUETA ATUALIZADO PARA SE PARECER COM A FOTO ***
+                // Removida a classe h-52 para não conflitar com a altura da impressão
                 const etiquetaHTML = `
-                    <div class="etiqueta bg-white rounded-lg p-3 border-2 border-gray-400 flex flex-col h-52">
+                    <div class="etiqueta bg-white rounded-lg p-3 border-2 border-gray-400 flex flex-col">
                         <!-- Topo da Etiqueta -->
-                        <div class="flex justify-between items-start mb-3">
+                        <!-- Espaçamento ajustado para a nova altura -->
+                        <div class="flex justify-between items-start mb-2">
                             <h3 class="text-xl font-bold w-3/4 leading-tight">${destinatario}</h3>
-                            <!-- --- CORREÇÃO AQUI --- Adicionada a classe 'volume-box' -->
                             <div class="volume-box bg-black text-white text-center p-1 px-3 rounded-md">
                                 <span class="font-bold text-xl">${i}/${volumes}</span>
                             </div>
