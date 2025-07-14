@@ -26,7 +26,6 @@
             border-bottom: 2px dashed #e5e7eb;
         }
 
-        /* --- CORREÇÃO AQUI --- */
         /* Estilo da marca d'água para a etiqueta (tela e impressão) */
         .etiqueta {
             position: relative; /* Necessário para o posicionamento do pseudo-elemento */
@@ -88,10 +87,14 @@
                 overflow: hidden; 
             }
             
-            /* Força o navegador a imprimir a cor de fundo da caixa de volume */
-            .volume-box {
+            /* --- CORREÇÃO AQUI --- */
+            /* Força a impressão de cores e imagens de fundo */
+            .volume-box, .etiqueta::before {
                 -webkit-print-color-adjust: exact !important;
                 color-adjust: exact !important;
+            }
+
+            .volume-box {
                 background-color: #000 !important; 
             }
         }
@@ -193,7 +196,6 @@
                     etiquetasContainer.appendChild(currentPageContainer);
                 }
 
-                // --- CORREÇÃO AQUI ---
                 // Conteúdo da etiqueta é envolvido por um div para ficar sobre a marca d'água
                 const etiquetaHTML = `
                     <div class="etiqueta bg-white rounded-lg p-3 border-2 border-gray-400 flex flex-col">
