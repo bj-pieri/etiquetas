@@ -44,6 +44,14 @@
                 break-inside: avoid;
                 box-shadow: none;
             }
+            
+            /* --- CORREÇÃO AQUI --- */
+            /* Força o navegador a imprimir a cor de fundo da caixa de volume */
+            .volume-box {
+                -webkit-print-color-adjust: exact !important;
+                color-adjust: exact !important;
+                background-color: #000 !important; /* Garante a cor de fundo */
+            }
         }
     </style>
 </head>
@@ -137,7 +145,8 @@
                         <!-- Topo da Etiqueta -->
                         <div class="flex justify-between items-start mb-3">
                             <h3 class="text-xl font-bold w-3/4 leading-tight">${destinatario}</h3>
-                            <div class="bg-black text-white text-center p-1 px-3 rounded-md">
+                            <!-- --- CORREÇÃO AQUI --- Adicionada a classe 'volume-box' -->
+                            <div class="volume-box bg-black text-white text-center p-1 px-3 rounded-md">
                                 <span class="font-bold text-xl">${i}/${volumes}</span>
                             </div>
                         </div>
