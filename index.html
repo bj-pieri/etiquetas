@@ -99,4 +99,200 @@
     <!-- SVG Icons for buttons -->
     <svg class="hidden">
         <symbol id="icon-copy" viewBox="0 0 20 20" fill="currentColor">
-            <path d="M7 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V4a2 2 0 00-2-2H7
+            <path d="M7 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V4a2 2 0 00-2-2H7zM7 4h8v12H7V4z"/>
+            <path d="M3 6a2 2 0 012-2h2v2H5v12h8v-2h2v2a2 2 0 01-2 2H5a2 2 0 01-2-2V6z"/>
+        </symbol>
+        <symbol id="icon-spinner" class="animate-spin" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </symbol>
+        <symbol id="icon-check" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+        </symbol>
+    </svg>
+
+    <div class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+        
+        <header class="mb-8 no-print">
+            <h1 class="text-3xl font-bold text-gray-900">Gerador de Etiquetas</h1>
+            <p class="mt-2 text-gray-600">Preencha os dados abaixo para criar as etiquetas de despacho.</p>
+        </header>
+
+        <main class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="md:col-span-1 no-print">
+                <form id="form-etiqueta" class="bg-white p-6 rounded-lg shadow-md space-y-4">
+                    <div>
+                        <label for="destinatario" class="block text-sm font-medium text-gray-700">Nome do Destinatário</label>
+                        <input type="text" id="destinatario" name="destinatario" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Daniel Rios de Souza">
+                    </div>
+                    <div>
+                        <label for="pedido" class="block text-sm font-medium text-gray-700">Número do Pedido</label>
+                        <input type="text" id="pedido" name="pedido" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="63096">
+                    </div>
+                    <div>
+                        <label for="cidade" class="block text-sm font-medium text-gray-700">Destino</label>
+                        <input type="text" id="cidade" name="cidade" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Retirada">
+                    </div>
+                    <div>
+                        <label for="volumes" class="block text-sm font-medium text-gray-700">Quantidade de Volumes</label>
+                        <input type="number" id="volumes" name="volumes" required min="1" value="1" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                    </div>
+                    
+                    <div class="pt-4 space-y-3">
+                         <button type="submit" id="btn-gerar" class="w-full flex justify-center items-center gap-2 py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            <span class="btn-text">Gerar Etiquetas</span>
+                            <svg class="hidden h-5 w-5" id="spinner-gerar"><use href="#icon-spinner"></use></svg>
+                            <svg class="hidden h-5 w-5" id="check-gerar"><use href="#icon-check"></use></svg>
+                        </button>
+                        <button type="button" id="btn-imprimir" class="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" disabled>
+                            Imprimir Etiquetas
+                        </button>
+                        <button type="button" id="btn-limpar" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md text-sm font-medium text-indigo-600 hover:text-indigo-800 focus:outline-none">
+                            Limpar Tudo
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="md:col-span-2">
+                <div id="etiquetas-container" class="bg-white p-6 rounded-lg shadow-inner min-h-[300px]">
+                    <div id="placeholder" class="col-span-full flex items-center justify-center text-gray-400 h-full">
+                        As etiquetas geradas aparecerão aqui para visualização.
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Seleciona os elementos do DOM
+        const form = document.getElementById('form-etiqueta');
+        const etiquetasContainer = document.getElementById('etiquetas-container');
+        const placeholder = document.getElementById('placeholder');
+        const btnGerar = document.getElementById('btn-gerar');
+        const btnImprimir = document.getElementById('btn-imprimir');
+        const btnLimpar = document.getElementById('btn-limpar');
+
+        // Função para feedback visual no botão
+        function setButtonState(state) {
+            const btnText = btnGerar.querySelector('.btn-text');
+            const spinner = btnGerar.querySelector('#spinner-gerar');
+            const check = btnGerar.querySelector('#check-gerar');
+
+            btnText.classList.add('hidden');
+            spinner.classList.add('hidden');
+            check.classList.add('hidden');
+            btnGerar.disabled = true;
+
+            if (state === 'loading') {
+                spinner.classList.remove('hidden');
+            } else if (state === 'success') {
+                btnText.textContent = 'Etiquetas Geradas!';
+                btnText.classList.remove('hidden');
+                check.classList.remove('hidden');
+                setTimeout(() => setButtonState('default'), 2000);
+            } else { // default
+                btnText.textContent = 'Gerar Etiquetas';
+                btnText.classList.remove('hidden');
+                btnGerar.disabled = false;
+            }
+        }
+
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+            setButtonState('loading');
+
+            setTimeout(() => {
+                etiquetasContainer.innerHTML = '';
+                const destinatario = document.getElementById('destinatario').value;
+                const pedido = document.getElementById('pedido').value;
+                const cidade = document.getElementById('cidade').value;
+                const volumes = parseInt(document.getElementById('volumes').value, 10);
+
+                if (!destinatario || !pedido || !cidade || isNaN(volumes) || volumes < 1) {
+                    etiquetasContainer.innerHTML = '<div class="col-span-full flex items-center justify-center text-red-500">Por favor, preencha todos os campos corretamente.</div>';
+                    btnImprimir.disabled = true;
+                    setButtonState('default');
+                    return;
+                }
+                
+                let currentPageContainer = null;
+                const ETIQUETAS_POR_PAGINA = 6;
+
+                for (let i = 1; i <= volumes; i++) {
+                    if ((i - 1) % ETIQUETAS_POR_PAGINA === 0) {
+                        currentPageContainer = document.createElement('div');
+                        currentPageContainer.classList.add('page-container-screen', 'page-container-print');
+                        etiquetasContainer.appendChild(currentPageContainer);
+                    }
+
+                    const etiquetaHTML = `
+                        <div class="etiqueta bg-white rounded-lg p-3 border-2 border-gray-400 flex flex-col">
+                            <button class="copy-btn absolute top-1 right-1 p-1 rounded-full bg-gray-100 bg-opacity-50 hover:bg-opacity-100 no-print" title="Copiar Dados">
+                                <svg class="h-4 w-4 text-gray-600"><use href="#icon-copy"></use></svg>
+                            </button>
+                            <div style="position: relative; z-index: 1; display: flex; flex-direction: column; height: 100%;">
+                                <div class="flex justify-between items-start mb-2">
+                                    <h3 class="text-xl font-bold w-3/4 leading-tight">${destinatario}</h3>
+                                    <div class="volume-box bg-black text-white text-center p-1 px-3 rounded-md">
+                                        <span class="font-bold text-xl">${i}/${volumes}</span>
+                                    </div>
+                                </div>
+                                <div class="flex-grow">
+                                    <p class="text-base"><span class="font-medium text-gray-600">Pedido:</span> ${pedido}</p>
+                                    <p class="text-base"><span class="font-medium text-gray-600">Destino:</span> ${cidade}</p>
+                                </div>
+                                <div class="border-t-2 border-dashed border-gray-300 pt-1 text-center">
+                                    <p class="font-semibold text-sm">Volume ${i} de ${volumes}</p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    currentPageContainer.insertAdjacentHTML('beforeend', etiquetaHTML);
+                }
+                btnImprimir.disabled = false;
+                setButtonState('success');
+            }, 500); // Simula um pequeno atraso
+        });
+        
+        btnImprimir.addEventListener('click', () => window.print());
+
+        btnLimpar.addEventListener('click', function() {
+            form.reset();
+            etiquetasContainer.innerHTML = `<div id="placeholder" class="col-span-full flex items-center justify-center text-gray-400 h-full">As etiquetas geradas aparecerão aqui para visualização.</div>`;
+            btnImprimir.disabled = true;
+        });
+        
+        // Delegação de evento para os botões de copiar
+        etiquetasContainer.addEventListener('click', function(event){
+            const copyBtn = event.target.closest('.copy-btn');
+            if(copyBtn) {
+                const etiquetaNode = copyBtn.closest('.etiqueta');
+                const destinatario = etiquetaNode.querySelector('h3').textContent;
+                const pedido = etiquetaNode.querySelector('p:nth-of-type(1)').textContent.replace('Pedido:', '').trim();
+                const cidade = etiquetaNode.querySelector('p:nth-of-type(2)').textContent.replace('Destino:', '').trim();
+                const volume = etiquetaNode.querySelector('.volume-box span').textContent;
+                
+                const textToCopy = `Destinatário: ${destinatario}\nPedido: ${pedido}\nDestino: ${cidade}\nVolume: ${volume}`;
+                
+                // Usando o método antigo para compatibilidade em iframes
+                const textArea = document.createElement("textarea");
+                textArea.value = textToCopy;
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                    copyBtn.title = 'Copiado!';
+                    setTimeout(() => { copyBtn.title = 'Copiar Dados'; }, 2000);
+                } catch (err) {
+                    console.error('Erro ao copiar: ', err);
+                    alert('Não foi possível copiar os dados.');
+                }
+                document.body.removeChild(textArea);
+            }
+        });
+
+    </script>
+</body>
+</html>
