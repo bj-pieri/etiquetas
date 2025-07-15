@@ -9,12 +9,46 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Estilos gerais com Tailwind, mas com algumas adições */
-        body {
-            font-family: 'Inter', sans-serif;
+        /* --- CORREÇÃO AQUI: CSS Variables for Theming --- */
+        :root {
+            --bg-primary: #f3f4f6; /* gray-100 */
+            --bg-secondary: #ffffff; /* white */
+            --bg-form: #ffffff; /* white */
+            --bg-input: #ffffff; /* white */
+            --text-title: #111827; /* gray-900 */
+            --text-body: #374151; /* gray-700 */
+            --text-muted: #4b5563; /* gray-600 */
+            --text-placeholder: #9ca3af; /* gray-400 */
+            --border-primary: #d1d5db; /* gray-300 */
+            --border-secondary: #e5e7eb; /* gray-200 */
+            --accent-primary: #4f46e5; /* indigo-600 */
+            --accent-primary-hover: #4338ca; /* indigo-700 */
+            --accent-text: #ffffff; /* white */
         }
 
-        /* Estilo para o container de visualização na tela */
+        body.dark {
+            --bg-primary: #000000; /* black */
+            --bg-secondary: #111111; /* vercel gray */
+            --bg-form: #111111; /* vercel gray */
+            --bg-input: #000000; /* black */
+            --text-title: #ffffff; /* white */
+            --text-body: #d1d5db; /* gray-300 */
+            --text-muted: #9ca3af; /* gray-400 */
+            --text-placeholder: #4b5563; /* gray-600 */
+            --border-primary: #374151; /* gray-700 */
+            --border-secondary: #1f2937; /* gray-800 */
+            --accent-primary: #8b5cf6; /* violet-500 */
+            --accent-primary-hover: #7c3aed; /* violet-600 */
+            --accent-text: #ffffff; /* white */
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-body);
+            transition: background-color 0.3s, color 0.3s;
+        }
+
         .page-container-screen {
             display: flex;
             flex-wrap: wrap;
@@ -24,18 +58,16 @@
         .page-container-screen:not(:last-child) {
             margin-bottom: 1rem;
             padding-bottom: 1rem;
-            border-bottom: 2px dashed #e5e7eb;
+            border-bottom: 2px dashed var(--border-secondary);
         }
 
-        /* Estilo da marca d'água e tamanho para a etiqueta (tela e impressão) */
         .etiqueta {
             position: relative;
             transition: all 0.2s ease-in-out;
             box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-            /* Tamanho fixo para a visualização na tela */
             width: 8.5cm;
             height: 4.5cm;
-            flex-shrink: 0; /* Impede que a etiqueta encolha */
+            flex-shrink: 0;
         }
         .etiqueta:hover {
             transform: scale(1.03);
@@ -56,99 +88,74 @@
             z-index: 0;
         }
 
-
-        /* Estilos específicos para a impressão */
         @media print {
-            .no-print {
-                display: none !important;
-            }
-            body {
-                margin: 0;
-                padding: 0;
-                background-color: #fff !important;
-            }
-            #etiquetas-container {
-                padding: 0;
-                box-shadow: none;
-                border: none;
-            }
-            .page-container-print {
-                display: grid; 
-                grid-template-columns: repeat(2, 8.5cm); 
-                gap: 0.5cm; 
-                width: fit-content; 
-                margin: 1cm auto;
-                page-break-after: always;
-            }
-            .etiqueta {
-                border: 2px solid #000 !important;
-                page-break-inside: avoid; 
-                break-inside: avoid;
-                box-shadow: none;
-                width: 8.5cm !important;
-                height: 4.5cm !important;
-                overflow: hidden; 
-            }
-            .volume-box, .etiqueta::before {
-                -webkit-print-color-adjust: exact !important;
-                color-adjust: exact !important;
-            }
-            .volume-box {
-                background-color: #000 !important; 
-            }
+            .no-print { display: none !important; }
+            body { margin: 0; padding: 0; background-color: #fff !important; }
+            #etiquetas-container { padding: 0; box-shadow: none; border: none; }
+            .page-container-print { display: grid; grid-template-columns: repeat(2, 8.5cm); gap: 0.5cm; width: fit-content; margin: 1cm auto; page-break-after: always; }
+            .etiqueta { border: 2px solid #000 !important; page-break-inside: avoid; break-inside: avoid; box-shadow: none; width: 8.5cm !important; height: 4.5cm !important; overflow: hidden; }
+            .volume-box, .etiqueta::before { -webkit-print-color-adjust: exact !important; color-adjust: exact !important; }
+            .volume-box { background-color: #000 !important; }
         }
     </style>
 </head>
-<body class="bg-gray-100 text-gray-800">
+<body>
 
     <!-- SVG Icons for buttons -->
     <svg class="hidden">
-        <symbol id="icon-spinner" class="animate-spin" fill="none" viewBox="0 0 24 24">
-            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-        </symbol>
-        <symbol id="icon-check" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-        </symbol>
+        <symbol id="icon-loader" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="animate-spin"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></symbol>
+        <symbol id="icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></symbol>
+        <symbol id="icon-printer" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></symbol>
+        <symbol id="icon-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></symbol>
+        <symbol id="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></symbol>
+        <symbol id="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></symbol>
     </svg>
 
     <div class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
         
-        <header class="mb-8 no-print">
-            <h1 class="text-3xl font-bold text-gray-900">Gerador de Etiquetas</h1>
-            <p class="mt-2 text-gray-600">Preencha os dados abaixo para criar as etiquetas de despacho.</p>
+        <header class="mb-8 no-print flex justify-between items-center">
+            <div>
+                <h1 class="text-3xl font-bold" style="color: var(--text-title);">Gerador de Etiquetas</h1>
+                <p class="mt-2" style="color: var(--text-muted);">Preencha os dados abaixo para criar as etiquetas de despacho.</p>
+            </div>
+            <button id="theme-toggle" class="p-2 rounded-md" style="color: var(--text-muted); background-color: var(--bg-secondary); border: 1px solid var(--border-primary);">
+                <svg id="theme-icon-sun" class="h-5 w-5"><use href="#icon-sun"></use></svg>
+                <svg id="theme-icon-moon" class="h-5 w-5 hidden"><use href="#icon-moon"></use></svg>
+            </button>
         </header>
 
         <main class="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div class="md:col-span-1 no-print">
-                <form id="form-etiqueta" class="bg-white p-6 rounded-lg shadow-md space-y-4">
+                <form id="form-etiqueta" class="p-6 rounded-lg shadow-md space-y-4" style="background-color: var(--bg-form); border: 1px solid var(--border-secondary);">
                     <div>
-                        <label for="destinatario" class="block text-sm font-medium text-gray-700">Nome do Destinatário</label>
-                        <input type="text" id="destinatario" name="destinatario" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Daniel Rios de Souza">
+                        <label for="destinatario" class="block text-sm font-medium" style="color: var(--text-body);">Nome do Destinatário</label>
+                        <input type="text" id="destinatario" name="destinatario" required class="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm sm:text-sm" style="background-color: var(--bg-input); border-color: var(--border-primary); color: var(--text-title); --placeholder-color: var(--text-placeholder);" placeholder="Daniel Rios de Souza">
                     </div>
                     <div>
-                        <label for="pedido" class="block text-sm font-medium text-gray-700">Número do Pedido</label>
-                        <input type="text" id="pedido" name="pedido" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="63096">
+                        <label for="pedido" class="block text-sm font-medium" style="color: var(--text-body);">Número do Pedido</label>
+                        <input type="text" id="pedido" name="pedido" required class="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm sm:text-sm" style="background-color: var(--bg-input); border-color: var(--border-primary); color: var(--text-title);" placeholder="63096">
                     </div>
                     <div>
-                        <label for="cidade" class="block text-sm font-medium text-gray-700">Destino</label>
-                        <input type="text" id="cidade" name="cidade" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Retirada">
+                        <label for="cidade" class="block text-sm font-medium" style="color: var(--text-body);">Destino</label>
+                        <input type="text" id="cidade" name="cidade" required class="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm sm:text-sm" style="background-color: var(--bg-input); border-color: var(--border-primary); color: var(--text-title);" placeholder="Retirada">
                     </div>
                     <div>
-                        <label for="volumes" class="block text-sm font-bold text-gray-700">Quantidade de Volumes</label>
-                        <input type="number" id="volumes" name="volumes" required min="1" value="1" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                        <label for="volumes" class="block text-sm font-bold" style="color: var(--text-body);">Quantidade de Volumes</label>
+                        <input type="number" id="volumes" name="volumes" required min="1" value="1" class="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm sm:text-sm" style="background-color: var(--bg-input); border-color: var(--border-primary); color: var(--text-title);">
                     </div>
                     
                     <div class="pt-4 space-y-3">
-                         <button type="submit" id="btn-gerar" class="w-full flex justify-center items-center gap-2 py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                         <button type="submit" id="btn-gerar" class="w-full flex justify-center items-center gap-2 py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2" style="background-color: var(--accent-primary); color: var(--accent-text); --ring-color: var(--accent-primary); --ring-offset-color: var(--bg-form);">
                             <span class="btn-text">Gerar Etiquetas</span>
-                            <svg class="hidden h-5 w-5" id="spinner-gerar"><use href="#icon-spinner"></use></svg>
+                            <svg class="hidden h-5 w-5" id="spinner-gerar"><use href="#icon-loader"></use></svg>
                             <svg class="hidden h-5 w-5" id="check-gerar"><use href="#icon-check"></use></svg>
                         </button>
-                        <button type="button" id="btn-imprimir" class="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" disabled>
+                        <button type="button" id="btn-imprimir" class="w-full flex justify-center items-center gap-2 py-2 px-4 border rounded-md shadow-sm text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2" style="background-color: var(--bg-secondary); color: var(--text-body); border-color: var(--border-primary); --ring-color: var(--accent-primary); --ring-offset-color: var(--bg-form);" disabled>
+                            <svg class="h-4 w-4"><use href="#icon-printer"></use></svg>
                             Imprimir Etiquetas
                         </button>
-                        <button type="button" id="btn-limpar" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md text-sm font-medium text-indigo-600 hover:text-indigo-800 focus:outline-none">
+                        <button type="button" id="btn-limpar" class="w-full flex justify-center items-center gap-2 py-2 px-4 border border-transparent rounded-md text-sm font-medium" style="color: var(--text-muted);">
+                            <svg class="h-4 w-4"><use href="#icon-trash"></use></svg>
                             Limpar Tudo
                         </button>
                     </div>
@@ -156,8 +163,8 @@
             </div>
 
             <div class="md:col-span-2">
-                <div id="etiquetas-container" class="bg-white p-6 rounded-lg shadow-inner min-h-[300px]">
-                    <div id="placeholder" class="col-span-full flex items-center justify-center text-gray-400 h-full">
+                <div id="etiquetas-container" class="p-6 rounded-lg shadow-inner min-h-[300px]" style="background-color: var(--bg-secondary); border: 1px solid var(--border-secondary);">
+                    <div id="placeholder" class="col-span-full flex items-center justify-center h-full" style="color: var(--text-placeholder);">
                         As etiquetas geradas aparecerão aqui para visualização.
                     </div>
                 </div>
@@ -166,7 +173,37 @@
     </div>
 
     <script>
-        // Seleciona os elementos do DOM
+        // --- THEME SWITCHER LOGIC ---
+        const themeToggle = document.getElementById('theme-toggle');
+        const sunIcon = document.getElementById('theme-icon-sun');
+        const moonIcon = document.getElementById('theme-icon-moon');
+
+        // Function to apply theme
+        const applyTheme = (theme) => {
+            if (theme === 'dark') {
+                document.body.classList.add('dark');
+                sunIcon.classList.add('hidden');
+                moonIcon.classList.remove('hidden');
+            } else {
+                document.body.classList.remove('dark');
+                sunIcon.classList.remove('hidden');
+                moonIcon.classList.add('hidden');
+            }
+        };
+
+        // Check for saved theme in localStorage
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        applyTheme(savedTheme);
+
+        // Event listener for the toggle button
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = document.body.classList.contains('dark') ? 'dark' : 'light';
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            localStorage.setItem('theme', newTheme);
+            applyTheme(newTheme);
+        });
+
+        // --- ORIGINAL SCRIPT ---
         const form = document.getElementById('form-etiqueta');
         const etiquetasContainer = document.getElementById('etiquetas-container');
         const placeholder = document.getElementById('placeholder');
@@ -174,7 +211,6 @@
         const btnImprimir = document.getElementById('btn-imprimir');
         const btnLimpar = document.getElementById('btn-limpar');
 
-        // Função para feedback visual no botão
         function setButtonState(state) {
             const btnText = btnGerar.querySelector('.btn-text');
             const spinner = btnGerar.querySelector('#spinner-gerar');
@@ -192,7 +228,7 @@
                 btnText.classList.remove('hidden');
                 check.classList.remove('hidden');
                 setTimeout(() => setButtonState('default'), 2000);
-            } else { // default
+            } else {
                 btnText.textContent = 'Gerar Etiquetas';
                 btnText.classList.remove('hidden');
                 btnGerar.disabled = false;
@@ -250,17 +286,16 @@
                 }
                 btnImprimir.disabled = false;
                 setButtonState('success');
-            }, 500); // Simula um pequeno atraso
+            }, 500);
         });
         
         btnImprimir.addEventListener('click', () => window.print());
 
         btnLimpar.addEventListener('click', function() {
             form.reset();
-            etiquetasContainer.innerHTML = `<div id="placeholder" class="col-span-full flex items-center justify-center text-gray-400 h-full">As etiquetas geradas aparecerão aqui para visualização.</div>`;
+            etiquetasContainer.innerHTML = `<div id="placeholder" class="col-span-full flex items-center justify-center h-full" style="color: var(--text-placeholder);">As etiquetas geradas aparecerão aqui para visualização.</div>`;
             btnImprimir.disabled = true;
         });
-
     </script>
 </body>
 </html>
