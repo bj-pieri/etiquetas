@@ -16,9 +16,10 @@
 
         /* Estilo para o container de visualização na tela */
         .page-container-screen {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            display: flex;
+            flex-wrap: wrap;
             gap: 1rem;
+            justify-content: center;
         }
         .page-container-screen:not(:last-child) {
             margin-bottom: 1rem;
@@ -26,11 +27,15 @@
             border-bottom: 2px dashed #e5e7eb;
         }
 
-        /* Estilo da marca d'água para a etiqueta (tela e impressão) */
+        /* Estilo da marca d'água e tamanho para a etiqueta (tela e impressão) */
         .etiqueta {
             position: relative;
             transition: all 0.2s ease-in-out;
             box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            /* Tamanho fixo para a visualização na tela */
+            width: 8.5cm;
+            height: 4.5cm;
+            flex-shrink: 0; /* Impede que a etiqueta encolha */
         }
         .etiqueta:hover {
             transform: scale(1.03);
@@ -60,7 +65,7 @@
             body {
                 margin: 0;
                 padding: 0;
-                background-color: #fff;
+                background-color: #fff !important;
             }
             #etiquetas-container {
                 padding: 0;
@@ -98,10 +103,6 @@
 
     <!-- SVG Icons for buttons -->
     <svg class="hidden">
-        <symbol id="icon-copy" viewBox="0 0 20 20" fill="currentColor">
-            <path d="M7 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V4a2 2 0 00-2-2H7zM7 4h8v12H7V4z"/>
-            <path d="M3 6a2 2 0 012-2h2v2H5v12h8v-2h2v2a2 2 0 01-2 2H5a2 2 0 01-2-2V6z"/>
-        </symbol>
         <symbol id="icon-spinner" class="animate-spin" fill="none" viewBox="0 0 24 24">
             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
@@ -228,22 +229,19 @@
 
                     const etiquetaHTML = `
                         <div class="etiqueta bg-white rounded-lg p-3 border-2 border-gray-400 flex flex-col">
-                            <button class="copy-btn absolute top-1 right-1 p-1 rounded-full bg-gray-100 bg-opacity-50 hover:bg-opacity-100 no-print" title="Copiar Dados">
-                                <svg class="h-4 w-4 text-gray-600"><use href="#icon-copy"></use></svg>
-                            </button>
                             <div style="position: relative; z-index: 1; display: flex; flex-direction: column; height: 100%;">
                                 <div class="flex justify-between items-start mb-2">
-                                    <h3 class="text-xl font-bold w-3/4 leading-tight">${destinatario}</h3>
+                                    <h3 class="text-xl font-bold w-3/4 leading-tight text-black">${destinatario}</h3>
                                     <div class="volume-box bg-black text-white text-center p-1 px-3 rounded-md">
                                         <span class="font-bold text-xl">${i}/${volumes}</span>
                                     </div>
                                 </div>
                                 <div class="flex-grow">
-                                    <p class="text-base"><span class="font-medium text-gray-600">Pedido:</span> ${pedido}</p>
-                                    <p class="text-base"><span class="font-medium text-gray-600">Destino:</span> ${cidade}</p>
+                                    <p class="text-base text-black"><span class="font-medium text-gray-600">Pedido:</span> ${pedido}</p>
+                                    <p class="text-base text-black"><span class="font-medium text-gray-600">Destino:</span> ${cidade}</p>
                                 </div>
                                 <div class="border-t-2 border-dashed border-gray-300 pt-1 text-center">
-                                    <p class="font-semibold text-sm">Volume ${i} de ${volumes}</p>
+                                    <p class="font-semibold text-sm text-black">Volume ${i} de ${volumes}</p>
                                 </div>
                             </div>
                         </div>
@@ -261,36 +259,6 @@
             form.reset();
             etiquetasContainer.innerHTML = `<div id="placeholder" class="col-span-full flex items-center justify-center text-gray-400 h-full">As etiquetas geradas aparecerão aqui para visualização.</div>`;
             btnImprimir.disabled = true;
-        });
-        
-        // Delegação de evento para os botões de copiar
-        etiquetasContainer.addEventListener('click', function(event){
-            const copyBtn = event.target.closest('.copy-btn');
-            if(copyBtn) {
-                const etiquetaNode = copyBtn.closest('.etiqueta');
-                const destinatario = etiquetaNode.querySelector('h3').textContent;
-                const pedido = etiquetaNode.querySelector('p:nth-of-type(1)').textContent.replace('Pedido:', '').trim();
-                const cidade = etiquetaNode.querySelector('p:nth-of-type(2)').textContent.replace('Destino:', '').trim();
-                const volume = etiquetaNode.querySelector('.volume-box span').textContent;
-                
-                const textToCopy = `Destinatário: ${destinatario}\nPedido: ${pedido}\nDestino: ${cidade}\nVolume: ${volume}`;
-                
-                // Usando o método antigo para compatibilidade em iframes
-                const textArea = document.createElement("textarea");
-                textArea.value = textToCopy;
-                document.body.appendChild(textArea);
-                textArea.focus();
-                textArea.select();
-                try {
-                    document.execCommand('copy');
-                    copyBtn.title = 'Copiado!';
-                    setTimeout(() => { copyBtn.title = 'Copiar Dados'; }, 2000);
-                } catch (err) {
-                    console.error('Erro ao copiar: ', err);
-                    alert('Não foi possível copiar os dados.');
-                }
-                document.body.removeChild(textArea);
-            }
         });
 
     </script>
