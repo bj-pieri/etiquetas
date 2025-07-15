@@ -8,7 +8,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
     <style>
         :root {
             --bg-primary: #f3f4f6; --bg-secondary: #ffffff; --bg-form: #ffffff; --bg-input: #ffffff;
@@ -28,8 +27,6 @@
         .etiqueta { position: relative; transition: all 0.2s ease-in-out; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); width: 8.5cm; height: 4.5cm; flex-shrink: 0; }
         .etiqueta:hover { transform: scale(1.03); box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1); }
         .etiqueta::before { content: ''; position: absolute; top: 5px; left: 5px; right: 5px; bottom: 5px; background-image: url('https://belportas.com.br/wp-content/uploads/2022/05/perfil-linktree.png'); background-position: center; background-repeat: no-repeat; background-size: contain; opacity: 0.1; z-index: 0; }
-        .qrcode-container { position: absolute; bottom: 4px; right: 4px; z-index: 2; background: white; padding: 2px; }
-        .qrcode-container > img { width: 3.5cm; height: 3.5cm; }
 
         @media print {
             .no-print { display: none !important; }
@@ -37,8 +34,6 @@
             #etiquetas-container { padding: 0; box-shadow: none; border: none; }
             .volume-box, .etiqueta::before { -webkit-print-color-adjust: exact !important; color-adjust: exact !important; }
             .volume-box { background-color: #000 !important; }
-            .qrcode-container { bottom: 2mm; right: 2mm; }
-            .qrcode-container > img { width: 1.2cm !important; height: 1.2cm !important; }
 
             /* A4 Layout (Default) */
             body:not(.thermal-layout) .page-container-print { display: grid; grid-template-columns: repeat(2, 8.5cm); gap: 0.5cm; width: fit-content; margin: 1cm auto; page-break-after: always; }
@@ -48,18 +43,22 @@
             body.thermal-layout #etiquetas-container { display: block; }
             body.thermal-layout .page-container-print { display: block; margin: 0; page-break-after: avoid; }
             body.thermal-layout .etiqueta {
-                width: 80mm !important;
-                height: 45mm !important; /* Altura ajustável para térmicas */
+                width: 78mm !important; /* Ajustado para margem da impressora */
+                height: auto !important; 
+                min-height: 45mm;
                 border: none !important;
                 box-shadow: none;
                 margin: 0;
-                padding: 2mm;
+                padding: 4mm;
                 page-break-after: always;
                 overflow: hidden;
             }
             body.thermal-layout .etiqueta::before { opacity: 0.05; }
-            body.thermal-layout .qrcode-container { bottom: 2mm; right: 2mm; }
-            body.thermal-layout .qrcode-container > img { width: 15mm !important; height: 15mm !important; }
+            body.thermal-layout .etiqueta h3 { font-size: 14pt !important; line-height: 1.2 !important; font-weight: 700 !important; }
+            body.thermal-layout .etiqueta p { font-size: 11pt !important; }
+            body.thermal-layout .etiqueta .volume-box { padding: 2mm !important; }
+            body.thermal-layout .etiqueta .volume-box span { font-size: 16pt !important; }
+            body.thermal-layout .etiqueta .border-t-2 { margin-top: 3mm; padding-top: 2mm; }
         }
     </style>
 </head>
@@ -73,7 +72,6 @@
         <symbol id="icon-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></symbol>
         <symbol id="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></symbol>
         <symbol id="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></symbol>
-        <symbol id="icon-settings" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 0 2.4l-.15.08a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.38a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1 0-2.4l.15-.08a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></symbol>
     </svg>
 
     <div class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
@@ -113,10 +111,6 @@
                     <div>
                         <label for="volumes" class="block text-sm font-bold" style="color: var(--text-body);">Quantidade de Volumes</label>
                         <input type="number" id="volumes" name="volumes" required min="1" value="1" class="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm sm:text-sm" style="background-color: var(--bg-input); border-color: var(--border-primary); color: var(--text-title);">
-                    </div>
-                     <div>
-                        <label for="qr-link" class="block text-sm font-medium" style="color: var(--text-body);">Link para QR Code (Opcional)</label>
-                        <input type="url" id="qr-link" name="qr-link" class="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm sm:text-sm" style="background-color: var(--bg-input); border-color: var(--border-primary); color: var(--text-title);" placeholder="https://seu-link.com">
                     </div>
                     
                     <div class="pt-4 space-y-3">
@@ -232,7 +226,6 @@
                 const pedido = document.getElementById('pedido').value;
                 const cidade = document.getElementById('cidade').value;
                 const volumes = parseInt(document.getElementById('volumes').value, 10);
-                const qrLink = document.getElementById('qr-link').value;
 
                 if (!destinatario || !pedido || !cidade || isNaN(volumes) || volumes < 1) {
                     etiquetasContainer.innerHTML = '<div class="col-span-full flex items-center justify-center text-red-500">Por favor, preencha todos os campos corretamente.</div>';
@@ -248,54 +241,4 @@
                     if ((i - 1) % ETIQUETAS_POR_PAGINA === 0) {
                         currentPageContainer = document.createElement('div');
                         currentPageContainer.classList.add('page-container-screen', 'page-container-print');
-                        etiquetasContainer.appendChild(currentPageContainer);
-                    }
-
-                    const qrContainerHTML = qrLink ? '<div class="qrcode-container"></div>' : '';
-                    const etiquetaHTML = `
-                        <div class="etiqueta bg-white rounded-lg p-3 border-2 border-gray-400 flex flex-col">
-                            ${qrContainerHTML}
-                            <div style="position: relative; z-index: 1; display: flex; flex-direction: column; height: 100%;">
-                                <div class="flex justify-between items-start mb-2">
-                                    <h3 class="text-xl font-bold w-3/4 leading-tight text-black">${destinatario}</h3>
-                                    <div class="volume-box bg-black text-white text-center p-1 px-3 rounded-md">
-                                        <span class="font-bold text-xl">${i}/${volumes}</span>
-                                    </div>
-                                </div>
-                                <div class="flex-grow">
-                                    <p class="text-base text-black"><span class="font-bold text-gray-600">Pedido:</span> ${pedido}</p>
-                                    <p class="text-base text-black"><span class="font-bold text-gray-600">Destino:</span> ${cidade}</p>
-                                </div>
-                                <div class="border-t-2 border-dashed border-gray-300 pt-1 text-center">
-                                    <p class="font-semibold text-sm text-black">Volume ${i} de ${volumes}</p>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                    currentPageContainer.insertAdjacentHTML('beforeend', etiquetaHTML);
-                    
-                    if (qrLink) {
-                        const qrElement = currentPageContainer.lastElementChild.querySelector('.qrcode-container');
-                        new QRCode(qrElement, {
-                            text: qrLink,
-                            width: 64,
-                            height: 64,
-                            correctLevel : QRCode.CorrectLevel.H
-                        });
-                    }
-                }
-                btnImprimir.disabled = false;
-                setButtonState('success');
-            }, 500);
-        });
-        
-        btnImprimir.addEventListener('click', () => window.print());
-
-        btnLimpar.addEventListener('click', function() {
-            form.reset();
-            etiquetasContainer.innerHTML = `<div id="placeholder" class="col-span-full flex items-center justify-center h-full" style="color: var(--text-placeholder);">As etiquetas geradas aparecerão aqui para visualização.</div>`;
-            btnImprimir.disabled = true;
-        });
-    </script>
-</body>
-</html>
+                        etique
