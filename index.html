@@ -28,7 +28,13 @@
 
         /* Estilo da marca d'água para a etiqueta (tela e impressão) */
         .etiqueta {
-            position: relative; /* Necessário para o posicionamento do pseudo-elemento */
+            position: relative;
+            transition: all 0.2s ease-in-out;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        .etiqueta:hover {
+            transform: scale(1.03);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
         }
         .etiqueta::before {
             content: '';
@@ -37,46 +43,39 @@
             left: 5px;
             right: 5px;
             bottom: 5px;
+            /* --- CORREÇÃO AQUI --- */
             background-image: url('https://belportas.com.br/wp-content/uploads/2022/05/perfil-linktree.png');
             background-position: center;
             background-repeat: no-repeat;
             background-size: contain;
-            opacity: 0.1; /* Deixa a imagem bem apagada (marca d'água) */
-            z-index: 0; /* Coloca o fundo atrás do conteúdo */
+            opacity: 0.1;
+            z-index: 0;
         }
 
 
         /* Estilos específicos para a impressão */
         @media print {
-            /* Esconde o formulário, o cabeçalho e os botões ao imprimir */
             .no-print {
                 display: none !important;
             }
-
-            /* Garante que a área de etiquetas ocupe toda a página */
             body {
                 margin: 0;
                 padding: 0;
                 background-color: #fff;
             }
-            
             #etiquetas-container {
                 padding: 0;
                 box-shadow: none;
                 border: none;
             }
-
-            /* Cada 'page-container' é um bloco de impressão */
             .page-container-print {
                 display: grid; 
                 grid-template-columns: repeat(2, 8.5cm); 
                 gap: 0.5cm; 
                 width: fit-content; 
-                margin: 1cm auto; /* Centraliza a grade na página */
-                page-break-after: always; /* Quebra a página após este container */
+                margin: 1cm auto;
+                page-break-after: always;
             }
-
-            /* Estilo da etiqueta para impressão, seguindo o modelo da foto */
             .etiqueta {
                 border: 2px solid #000 !important;
                 page-break-inside: avoid; 
@@ -86,13 +85,10 @@
                 height: 4.5cm !important;
                 overflow: hidden; 
             }
-            
-            /* Força a impressão de cores e imagens de fundo */
             .volume-box, .etiqueta::before {
                 -webkit-print-color-adjust: exact !important;
                 color-adjust: exact !important;
             }
-
             .volume-box {
                 background-color: #000 !important; 
             }
@@ -101,16 +97,29 @@
 </head>
 <body class="bg-gray-100 text-gray-800">
 
+    <!-- SVG Icons for buttons -->
+    <svg class="hidden">
+        <symbol id="icon-copy" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M7 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V4a2 2 0 00-2-2H7zM7 4h8v12H7V4z"/>
+            <path d="M3 6a2 2 0 012-2h2v2H5v12h8v-2h2v2a2 2 0 01-2 2H5a2 2 0 01-2-2V6z"/>
+        </symbol>
+        <symbol id="icon-spinner" class="animate-spin" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </symbol>
+        <symbol id="icon-check" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+        </symbol>
+    </svg>
+
     <div class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
         
-        <!-- Cabeçalho e formulário - não serão impressos -->
         <header class="mb-8 no-print">
             <h1 class="text-3xl font-bold text-gray-900">Gerador de Etiquetas</h1>
             <p class="mt-2 text-gray-600">Preencha os dados abaixo para criar as etiquetas de despacho.</p>
         </header>
 
         <main class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <!-- Coluna do Formulário -->
             <div class="md:col-span-1 no-print">
                 <form id="form-etiqueta" class="bg-white p-6 rounded-lg shadow-md space-y-4">
                     <div>
@@ -129,33 +138,35 @@
                         <label for="volumes" class="block text-sm font-medium text-gray-700">Quantidade de Volumes</label>
                         <input type="number" id="volumes" name="volumes" required min="1" value="1" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                     </div>
+                    
                     <div class="pt-4 space-y-3">
-                         <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                            Gerar Etiquetas
+                         <button type="submit" id="btn-gerar" class="w-full flex justify-center items-center gap-2 py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            <span class="btn-text">Gerar Etiquetas</span>
+                            <svg class="hidden h-5 w-5" id="spinner-gerar"><use href="#icon-spinner"></use></svg>
+                            <svg class="hidden h-5 w-5" id="check-gerar"><use href="#icon-check"></use></svg>
                         </button>
                         <button type="button" id="btn-imprimir" class="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" disabled>
                             Imprimir Etiquetas
                         </button>
-                        <!-- --- CORREÇÃO AQUI --- -->
-                        <!-- Botão para limpar o formulário -->
-                        <button type="button" id="btn-limpar" class="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                            Limpar
+                        <div class="grid grid-cols-2 gap-3">
+                            <button type="button" id="btn-salvar" class="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Salvar</button>
+                            <button type="button" id="btn-carregar" class="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Carregar</button>
+                        </div>
+                        <button type="button" id="btn-limpar" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md text-sm font-medium text-indigo-600 hover:text-indigo-800 focus:outline-none">
+                            Limpar Tudo
                         </button>
                     </div>
                 </form>
             </div>
 
-            <!-- Coluna de Visualização das Etiquetas -->
             <div class="md:col-span-2">
                 <div id="etiquetas-container" class="bg-white p-6 rounded-lg shadow-inner min-h-[300px]">
-                    <!-- As etiquetas geradas aparecerão aqui -->
                     <div id="placeholder" class="col-span-full flex items-center justify-center text-gray-400 h-full">
                         As etiquetas geradas aparecerão aqui para visualização.
                     </div>
                 </div>
             </div>
         </main>
-
     </div>
 
     <script>
@@ -163,98 +174,160 @@
         const form = document.getElementById('form-etiqueta');
         const etiquetasContainer = document.getElementById('etiquetas-container');
         const placeholder = document.getElementById('placeholder');
+        const btnGerar = document.getElementById('btn-gerar');
         const btnImprimir = document.getElementById('btn-imprimir');
-        // --- CORREÇÃO AQUI ---
-        // Seleciona o novo botão de limpar
         const btnLimpar = document.getElementById('btn-limpar');
+        const btnSalvar = document.getElementById('btn-salvar');
+        const btnCarregar = document.getElementById('btn-carregar');
 
-        // Adiciona o listener de evento para o formulário
-        form.addEventListener('submit', function(event) {
-            // Previne o comportamento padrão de recarregar a página
-            event.preventDefault();
+        // Função para feedback visual no botão
+        function setButtonState(state) {
+            const btnText = btnGerar.querySelector('.btn-text');
+            const spinner = btnGerar.querySelector('#spinner-gerar');
+            const check = btnGerar.querySelector('#check-gerar');
 
-            // Limpa o container de etiquetas antes de gerar novas
-            etiquetasContainer.innerHTML = '';
+            btnText.classList.add('hidden');
+            spinner.classList.add('hidden');
+            check.classList.add('hidden');
+            btnGerar.disabled = true;
 
-            // Pega os valores dos campos do formulário
-            const destinatario = document.getElementById('destinatario').value;
-            const pedido = document.getElementById('pedido').value;
-            const cidade = document.getElementById('cidade').value;
-            const volumes = parseInt(document.getElementById('volumes').value, 10);
-
-            // Validação simples
-            if (!destinatario || !pedido || !cidade || isNaN(volumes) || volumes < 1) {
-                etiquetasContainer.innerHTML = '<div class="col-span-full flex items-center justify-center text-red-500">Por favor, preencha todos os campos corretamente.</div>';
-                btnImprimir.disabled = true;
-                return;
+            if (state === 'loading') {
+                spinner.classList.remove('hidden');
+            } else if (state === 'success') {
+                btnText.textContent = 'Etiquetas Geradas!';
+                btnText.classList.remove('hidden');
+                check.classList.remove('hidden');
+                setTimeout(() => setButtonState('default'), 2000);
+            } else { // default
+                btnText.textContent = 'Gerar Etiquetas';
+                btnText.classList.remove('hidden');
+                btnGerar.disabled = false;
             }
-            
-            // Lógica para criar um container por página
-            let currentPageContainer = null;
-            const ETIQUETAS_POR_PAGINA = 6;
+        }
 
-            // Loop para criar cada etiqueta dinamicamente
-            for (let i = 1; i <= volumes; i++) {
-                // Cria um novo container de página a cada 6 etiquetas
-                if ((i - 1) % ETIQUETAS_POR_PAGINA === 0) {
-                    currentPageContainer = document.createElement('div');
-                    // Adiciona classes para estilização na tela e na impressão
-                    currentPageContainer.classList.add('page-container-screen', 'page-container-print');
-                    etiquetasContainer.appendChild(currentPageContainer);
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+            setButtonState('loading');
+
+            setTimeout(() => {
+                etiquetasContainer.innerHTML = '';
+                const destinatario = document.getElementById('destinatario').value;
+                const pedido = document.getElementById('pedido').value;
+                const cidade = document.getElementById('cidade').value;
+                const volumes = parseInt(document.getElementById('volumes').value, 10);
+
+                if (!destinatario || !pedido || !cidade || isNaN(volumes) || volumes < 1) {
+                    etiquetasContainer.innerHTML = '<div class="col-span-full flex items-center justify-center text-red-500">Por favor, preencha todos os campos corretamente.</div>';
+                    btnImprimir.disabled = true;
+                    setButtonState('default');
+                    return;
                 }
+                
+                let currentPageContainer = null;
+                const ETIQUETAS_POR_PAGINA = 6;
 
-                // Conteúdo da etiqueta é envolvido por um div para ficar sobre a marca d'água
-                const etiquetaHTML = `
-                    <div class="etiqueta bg-white rounded-lg p-3 border-2 border-gray-400 flex flex-col">
-                        <div style="position: relative; z-index: 1; display: flex; flex-direction: column; height: 100%;">
-                            <!-- Topo da Etiqueta -->
-                            <div class="flex justify-between items-start mb-2">
-                                <h3 class="text-xl font-bold w-3/4 leading-tight">${destinatario}</h3>
-                                <div class="volume-box bg-black text-white text-center p-1 px-3 rounded-md">
-                                    <span class="font-bold text-xl">${i}/${volumes}</span>
+                for (let i = 1; i <= volumes; i++) {
+                    if ((i - 1) % ETIQUETAS_POR_PAGINA === 0) {
+                        currentPageContainer = document.createElement('div');
+                        currentPageContainer.classList.add('page-container-screen', 'page-container-print');
+                        etiquetasContainer.appendChild(currentPageContainer);
+                    }
+
+                    const etiquetaHTML = `
+                        <div class="etiqueta bg-white rounded-lg p-3 border-2 border-gray-400 flex flex-col">
+                            <button class="copy-btn absolute top-1 right-1 p-1 rounded-full bg-gray-100 bg-opacity-50 hover:bg-opacity-100 no-print" title="Copiar Dados">
+                                <svg class="h-4 w-4 text-gray-600"><use href="#icon-copy"></use></svg>
+                            </button>
+                            <div style="position: relative; z-index: 1; display: flex; flex-direction: column; height: 100%;">
+                                <div class="flex justify-between items-start mb-2">
+                                    <h3 class="text-xl font-bold w-3/4 leading-tight">${destinatario}</h3>
+                                    <div class="volume-box bg-black text-white text-center p-1 px-3 rounded-md">
+                                        <span class="font-bold text-xl">${i}/${volumes}</span>
+                                    </div>
+                                </div>
+                                <div class="flex-grow">
+                                    <p class="text-base"><span class="font-medium text-gray-600">Pedido:</span> ${pedido}</p>
+                                    <p class="text-base"><span class="font-medium text-gray-600">Destino:</span> ${cidade}</p>
+                                </div>
+                                <div class="border-t-2 border-dashed border-gray-300 pt-1 text-center">
+                                    <p class="font-semibold text-sm">Volume ${i} de ${volumes}</p>
                                 </div>
                             </div>
-
-                            <!-- Meio da Etiqueta -->
-                            <div class="flex-grow">
-                                <p class="text-base"><span class="font-semibold">Pedido:</span> ${pedido}</p>
-                                <p class="text-base"><span class="font-semibold">Destino:</span> ${cidade}</p>
-                            </div>
-
-                            <!-- Rodapé da Etiqueta -->
-                            <div class="border-t-2 border-dashed border-gray-300 pt-1 text-center">
-                                <p class="font-semibold text-sm">Volume ${i} de ${volumes}</p>
-                            </div>
                         </div>
-                    </div>
-                `;
-                // Adiciona a etiqueta gerada ao container da página atual
-                currentPageContainer.insertAdjacentHTML('beforeend', etiquetaHTML);
-            }
-
-            // Habilita o botão de impressão
-            btnImprimir.disabled = false;
+                    `;
+                    currentPageContainer.insertAdjacentHTML('beforeend', etiquetaHTML);
+                }
+                btnImprimir.disabled = false;
+                setButtonState('success');
+            }, 500); // Simula um pequeno atraso
         });
+        
+        btnImprimir.addEventListener('click', () => window.print());
 
-        // Adiciona o listener de evento para o botão de impressão
-        btnImprimir.addEventListener('click', function() {
-            // Chama a função de impressão do navegador
-            window.print();
-        });
-
-        // --- CORREÇÃO AQUI ---
-        // Adiciona o listener de evento para o botão de limpar
         btnLimpar.addEventListener('click', function() {
-            // Reseta o formulário para os valores iniciais
             form.reset();
-            // Limpa a área de visualização e restaura o placeholder
-            etiquetasContainer.innerHTML = `
-                <div id="placeholder" class="col-span-full flex items-center justify-center text-gray-400 h-full">
-                    As etiquetas geradas aparecerão aqui para visualização.
-                </div>
-            `;
-            // Desabilita o botão de impressão
+            etiquetasContainer.innerHTML = `<div id="placeholder" class="col-span-full flex items-center justify-center text-gray-400 h-full">As etiquetas geradas aparecerão aqui para visualização.</div>`;
             btnImprimir.disabled = true;
+            localStorage.removeItem('etiquetaFormData'); // Limpa também os dados salvos
+        });
+
+        btnSalvar.addEventListener('click', function() {
+            const formData = {
+                destinatario: document.getElementById('destinatario').value,
+                pedido: document.getElementById('pedido').value,
+                cidade: document.getElementById('cidade').value,
+                volumes: document.getElementById('volumes').value,
+            };
+            localStorage.setItem('etiquetaFormData', JSON.stringify(formData));
+            alert('Dados salvos no navegador!');
+        });
+
+        btnCarregar.addEventListener('click', function() {
+            const savedData = localStorage.getItem('etiquetaFormData');
+            if (savedData) {
+                const formData = JSON.parse(savedData);
+                document.getElementById('destinatario').value = formData.destinatario || '';
+                document.getElementById('pedido').value = formData.pedido || '';
+                document.getElementById('cidade').value = formData.cidade || '';
+                document.getElementById('volumes').value = formData.volumes || 1;
+            } else {
+                // Não mostra alerta se não houver dados, apenas não preenche.
+            }
+        });
+        
+        // Carrega dados salvos ao iniciar a página
+        document.addEventListener('DOMContentLoaded', () => {
+            btnCarregar.dispatchEvent(new Event('click'));
+        });
+        
+        // Delegação de evento para os botões de copiar
+        etiquetasContainer.addEventListener('click', function(event){
+            const copyBtn = event.target.closest('.copy-btn');
+            if(copyBtn) {
+                const etiquetaNode = copyBtn.closest('.etiqueta');
+                const destinatario = etiquetaNode.querySelector('h3').textContent;
+                const pedido = etiquetaNode.querySelector('p:nth-of-type(1)').textContent.replace('Pedido:', '').trim();
+                const cidade = etiquetaNode.querySelector('p:nth-of-type(2)').textContent.replace('Destino:', '').trim();
+                const volume = etiquetaNode.querySelector('.volume-box span').textContent;
+                
+                const textToCopy = `Destinatário: ${destinatario}\nPedido: ${pedido}\nDestino: ${cidade}\nVolume: ${volume}`;
+                
+                // Usando o método antigo para compatibilidade em iframes
+                const textArea = document.createElement("textarea");
+                textArea.value = textToCopy;
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                    copyBtn.title = 'Copiado!';
+                    setTimeout(() => { copyBtn.title = 'Copiar Dados'; }, 2000);
+                } catch (err) {
+                    console.error('Erro ao copiar: ', err);
+                    alert('Não foi possível copiar os dados.');
+                }
+                document.body.removeChild(textArea);
+            }
         });
 
     </script>
