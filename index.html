@@ -11,97 +11,69 @@
     <style>
         /* --- CSS Variables for Theming --- */
         :root {
-            --bg-primary: #f3f4f6; /* gray-100 */
-            --bg-secondary: #ffffff; /* white */
-            --bg-form: #ffffff; /* white */
-            --bg-input: #ffffff; /* white */
-            --text-title: #111827; /* gray-900 */
-            --text-body: #374151; /* gray-700 */
-            --text-muted: #4b5563; /* gray-600 */
-            --text-placeholder: #9ca3af; /* gray-400 */
-            --border-primary: #d1d5db; /* gray-300 */
-            --border-secondary: #e5e7eb; /* gray-200 */
-            --accent-primary: #4f46e5; /* indigo-600 */
-            --accent-primary-hover: #4338ca; /* indigo-700 */
-            --accent-text: #ffffff; /* white */
+            --bg-primary: #f3f4f6; --bg-secondary: #ffffff; --bg-form: #ffffff; --bg-input: #ffffff;
+            --text-title: #111827; --text-body: #374151; --text-muted: #4b5563; --text-placeholder: #9ca3af;
+            --border-primary: #d1d5db; --border-secondary: #e5e7eb;
+            --accent-primary: #4f46e5; --accent-primary-hover: #4338ca; --accent-text: #ffffff;
         }
-
         body.dark {
-            --bg-primary: #000000; /* black */
-            --bg-secondary: #111111; /* vercel gray */
-            --bg-form: #111111; /* vercel gray */
-            --bg-input: #000000; /* black */
-            --text-title: #ffffff; /* white */
-            --text-body: #d1d5db; /* gray-300 */
-            --text-muted: #9ca3af; /* gray-400 */
-            --text-placeholder: #4b5563; /* gray-600 */
-            --border-primary: #374151; /* gray-700 */
-            --border-secondary: #1f2937; /* gray-800 */
-            --accent-primary: #8b5cf6; /* violet-500 */
-            --accent-primary-hover: #7c3aed; /* violet-600 */
-            --accent-text: #ffffff; /* white */
+            --bg-primary: #000000; --bg-secondary: #111111; --bg-form: #111111; --bg-input: #000000;
+            --text-title: #ffffff; --text-body: #d1d5db; --text-muted: #9ca3af; --text-placeholder: #4b5563;
+            --border-primary: #374151; --border-secondary: #1f2937;
+            --accent-primary: #8b5cf6; --accent-primary-hover: #7c3aed; --accent-text: #ffffff;
         }
+        * { box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg-primary); color: var(--text-body); transition: background-color 0.3s, color 0.3s; }
         
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-primary);
-            color: var(--text-body);
-            transition: background-color 0.3s, color 0.3s;
-        }
-
-        .page-container-screen {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            justify-content: center;
-        }
-        .page-container-screen:not(:last-child) {
-            margin-bottom: 1rem;
-            padding-bottom: 1rem;
-            border-bottom: 2px dashed var(--border-secondary);
-        }
-
-        .etiqueta {
-            position: relative;
-            transition: all 0.2s ease-in-out;
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-            width: 8.5cm;
-            height: 4.5cm;
-            flex-shrink: 0;
-        }
-        .etiqueta:hover {
-            transform: scale(1.03);
-            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-        }
-        .etiqueta::before {
-            content: '';
-            position: absolute;
-            top: 5px;
-            left: 5px;
-            right: 5px;
-            bottom: 5px;
-            background-image: url('https://belportas.com.br/wp-content/uploads/2022/05/perfil-linktree.png');
-            background-position: center;
-            background-repeat: no-repeat;
-            background-size: contain;
-            opacity: 0.1;
-            z-index: 0;
-        }
+        .page-container-screen { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; }
+        .page-container-screen:not(:last-child) { margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 2px dashed var(--border-secondary); }
+        
+        .etiqueta { position: relative; transition: all 0.2s ease-in-out; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); flex-shrink: 0; }
+        .etiqueta:hover { transform: scale(1.03); box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1); }
+        .etiqueta::before { content: ''; position: absolute; top: 5px; left: 5px; right: 5px; bottom: 5px; background-image: url('https://belportas.com.br/wp-content/uploads/2022/05/perfil-linktree.png'); background-position: center; background-repeat: no-repeat; background-size: contain; opacity: 0.1; z-index: 0; }
+        
+        /* Screen Layouts */
+        body:not(.thermal-layout) .etiqueta { width: 8.5cm; height: 4.5cm; }
+        body.thermal-layout .etiqueta { width: 80mm; height: auto; min-height: 45mm; }
+        body.thermal-layout .page-container-screen { flex-direction: column; align-items: center; }
 
         @media print {
             .no-print { display: none !important; }
             body { margin: 0; padding: 0; background-color: #fff !important; }
             #etiquetas-container { padding: 0; box-shadow: none; border: none; }
-            .page-container-print { display: grid; grid-template-columns: repeat(2, 8.5cm); gap: 0.5cm; width: fit-content; margin: 1cm auto; page-break-after: always; }
-            .etiqueta { border: 2px solid #000 !important; page-break-inside: avoid; break-inside: avoid; box-shadow: none; width: 8.5cm !important; height: 4.5cm !important; overflow: hidden; }
             .volume-box, .etiqueta::before { -webkit-print-color-adjust: exact !important; color-adjust: exact !important; }
             .volume-box { background-color: #000 !important; }
+
+            /* A4 Layout (Default) */
+            body:not(.thermal-layout) .page-container-print { display: grid; grid-template-columns: repeat(2, 8.5cm); gap: 0.5cm; width: fit-content; margin: 1cm auto; page-break-after: always; }
+            body:not(.thermal-layout) .etiqueta { border: 2px solid #000 !important; page-break-inside: avoid; break-inside: avoid; box-shadow: none; width: 8.5cm !important; height: 4.5cm !important; overflow: hidden; }
+            
+            /* Thermal Layout */
+            body.thermal-layout #etiquetas-container { display: block; }
+            body.thermal-layout .page-container-print { display: block; margin: 0; page-break-after: avoid; }
+            body.thermal-layout .etiqueta {
+                width: 78mm !important; 
+                height: auto !important; 
+                min-height: 45mm;
+                border: none !important;
+                box-shadow: none;
+                margin: 0;
+                padding: 4mm;
+                page-break-after: always;
+                overflow: hidden;
+            }
+            body.thermal-layout .etiqueta::before { opacity: 0.05; }
+            body.thermal-layout .etiqueta h3 { font-size: 14pt !important; line-height: 1.2 !important; font-weight: 700 !important; }
+            body.thermal-layout .etiqueta p { font-size: 11pt !important; }
+            body.thermal-layout .etiqueta .volume-box { padding: 2mm !important; }
+            body.thermal-layout .etiqueta .volume-box span { font-size: 16pt !important; }
+            body.thermal-layout .etiqueta .border-t-2 { margin-top: 3mm; padding-top: 2mm; }
         }
     </style>
 </head>
 <body>
 
-    <!-- SVG Icons for buttons -->
+    <!-- SVG Icons -->
     <svg class="hidden">
         <symbol id="icon-loader" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="animate-spin"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></symbol>
         <symbol id="icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></symbol>
@@ -113,15 +85,21 @@
 
     <div class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
         
-        <header class="mb-8 no-print flex justify-between items-center">
+        <header class="mb-8 no-print flex justify-between items-start">
             <div>
                 <h1 class="text-3xl font-bold" style="color: var(--text-title);">Gerador de Etiquetas</h1>
                 <p class="mt-2" style="color: var(--text-muted);">Preencha os dados abaixo para criar as etiquetas de despacho.</p>
             </div>
-            <button id="theme-toggle" class="p-2 rounded-md" style="color: var(--text-muted); background-color: var(--bg-secondary); border: 1px solid var(--border-primary);">
-                <svg id="theme-icon-sun" class="h-5 w-5"><use href="#icon-sun"></use></svg>
-                <svg id="theme-icon-moon" class="h-5 w-5 hidden"><use href="#icon-moon"></use></svg>
-            </button>
+            <div class="flex items-center gap-2">
+                <div id="print-mode-toggle" class="flex border rounded-md" style="border-color: var(--border-primary);">
+                    <button id="btn-a4" class="px-3 py-2 text-sm rounded-l-md" data-mode="a4">Folha A4</button>
+                    <button id="btn-thermal" class="px-3 py-2 text-sm rounded-r-md" data-mode="thermal">Térmica 80mm</button>
+                </div>
+                <button id="theme-toggle" class="p-2 rounded-md" style="color: var(--text-muted); background-color: var(--bg-secondary); border: 1px solid var(--border-primary);">
+                    <svg id="theme-icon-sun" class="h-5 w-5"><use href="#icon-sun"></use></svg>
+                    <svg id="theme-icon-moon" class="h-5 w-5 hidden"><use href="#icon-moon"></use></svg>
+                </button>
+            </div>
         </header>
 
         <main class="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -129,7 +107,7 @@
                 <form id="form-etiqueta" class="p-6 rounded-lg shadow-md space-y-4" style="background-color: var(--bg-form); border: 1px solid var(--border-secondary);">
                     <div>
                         <label for="destinatario" class="block text-sm font-medium" style="color: var(--text-body);">Nome do Destinatário</label>
-                        <input type="text" id="destinatario" name="destinatario" required class="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm sm:text-sm" style="background-color: var(--bg-input); border-color: var(--border-primary); color: var(--text-title); --placeholder-color: var(--text-placeholder);" placeholder="Daniel Rios de Souza">
+                        <input type="text" id="destinatario" name="destinatario" required class="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm sm:text-sm" style="background-color: var(--bg-input); border-color: var(--border-primary); color: var(--text-title);" placeholder="Daniel Rios de Souza">
                     </div>
                     <div>
                         <label for="pedido" class="block text-sm font-medium" style="color: var(--text-body);">Número do Pedido</label>
@@ -175,60 +153,89 @@
     </div>
 
     <script>
-        // --- THEME SWITCHER LOGIC ---
+        // --- SAFE LOCALSTORAGE WRAPPERS ---
+        function getFromLocalStorage(key, defaultValue) {
+            try {
+                const value = localStorage.getItem(key);
+                return value ? value : defaultValue;
+            } catch (e) {
+                console.warn(`Could not read from localStorage: ${e.message}`);
+                return defaultValue;
+            }
+        }
+
+        function setToLocalStorage(key, value) {
+            try {
+                localStorage.setItem(key, value);
+            } catch (e) {
+                console.warn(`Could not write to localStorage: ${e.message}`);
+            }
+        }
+
+        // --- THEME & LAYOUT SWITCHER LOGIC ---
         const themeToggle = document.getElementById('theme-toggle');
         const sunIcon = document.getElementById('theme-icon-sun');
         const moonIcon = document.getElementById('theme-icon-moon');
-
-        // Function to apply theme
-        const applyTheme = (theme) => {
-            if (theme === 'dark') {
-                document.body.classList.add('dark');
-                sunIcon.classList.add('hidden');
-                moonIcon.classList.remove('hidden');
-            } else {
-                document.body.classList.remove('dark');
-                sunIcon.classList.remove('hidden');
-                moonIcon.classList.add('hidden');
-            }
-        };
-
-        // Check for saved theme in localStorage
-        const savedTheme = localStorage.getItem('theme') || 'light';
-        applyTheme(savedTheme);
-
-        // Event listener for the toggle button
-        themeToggle.addEventListener('click', () => {
-            const currentTheme = document.body.classList.contains('dark') ? 'dark' : 'light';
-            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-            localStorage.setItem('theme', newTheme);
-            applyTheme(newTheme);
-        });
-
-        // --- ORIGINAL SCRIPT ---
+        const btnA4 = document.getElementById('btn-a4');
+        const btnThermal = document.getElementById('btn-thermal');
         const form = document.getElementById('form-etiqueta');
         const etiquetasContainer = document.getElementById('etiquetas-container');
-        const placeholder = document.getElementById('placeholder');
         const btnGerar = document.getElementById('btn-gerar');
         const btnImprimir = document.getElementById('btn-imprimir');
         const btnLimpar = document.getElementById('btn-limpar');
 
+        const applyTheme = (theme) => {
+            document.body.classList.toggle('dark', theme === 'dark');
+            sunIcon.classList.toggle('hidden', theme === 'dark');
+            moonIcon.classList.toggle('hidden', theme !== 'dark');
+        };
+
+        const applyPrintMode = (mode) => {
+            document.body.classList.toggle('thermal-layout', mode === 'thermal');
+            btnA4.style.backgroundColor = mode === 'a4' ? 'var(--accent-primary)' : 'transparent';
+            btnA4.style.color = mode === 'a4' ? 'var(--accent-text)' : 'var(--text-muted)';
+            btnThermal.style.backgroundColor = mode === 'thermal' ? 'var(--accent-primary)' : 'transparent';
+            btnThermal.style.color = mode === 'thermal' ? 'var(--accent-text)' : 'var(--text-muted)';
+        };
+        
+        const savedTheme = getFromLocalStorage('theme', 'light');
+        applyTheme(savedTheme);
+        
+        let savedPrintMode = getFromLocalStorage('printMode', 'a4');
+        applyPrintMode(savedPrintMode);
+
+        themeToggle.addEventListener('click', () => {
+            const newTheme = document.body.classList.contains('dark') ? 'light' : 'dark';
+            setToLocalStorage('theme', newTheme);
+            applyTheme(newTheme);
+        });
+
+        const handlePrintModeChange = (mode) => {
+            if (savedPrintMode === mode) return;
+            savedPrintMode = mode;
+            setToLocalStorage('printMode', mode);
+            applyPrintMode(mode);
+            // Re-render labels if they exist
+            if (etiquetasContainer.querySelector('.etiqueta')) {
+                form.dispatchEvent(new Event('submit', { 'bubbles': true, 'cancelable': true }));
+            }
+        };
+
+        btnA4.addEventListener('click', () => handlePrintModeChange('a4'));
+        btnThermal.addEventListener('click', () => handlePrintModeChange('thermal'));
+
+        // --- GENERATION SCRIPT ---
         function setButtonState(state) {
             const btnText = btnGerar.querySelector('.btn-text');
             const spinner = btnGerar.querySelector('#spinner-gerar');
             const check = btnGerar.querySelector('#check-gerar');
-
-            btnText.classList.add('hidden');
-            spinner.classList.add('hidden');
-            check.classList.add('hidden');
             btnGerar.disabled = true;
+            [btnText, spinner, check].forEach(el => el.classList.add('hidden'));
 
-            if (state === 'loading') {
-                spinner.classList.remove('hidden');
-            } else if (state === 'success') {
+            if (state === 'loading') spinner.classList.remove('hidden');
+            else if (state === 'success') {
                 btnText.textContent = 'Etiquetas Geradas!';
-                btnText.classList.remove('hidden');
-                check.classList.remove('hidden');
+                [btnText, check].forEach(el => el.classList.remove('hidden'));
                 setTimeout(() => setButtonState('default'), 2000);
             } else {
                 btnText.textContent = 'Gerar Etiquetas';
@@ -237,58 +244,59 @@
             }
         }
 
+        const generateLabels = () => {
+            etiquetasContainer.innerHTML = '';
+            const destinatario = document.getElementById('destinatario').value;
+            const pedido = document.getElementById('pedido').value;
+            const cidade = document.getElementById('cidade').value;
+            const volumes = parseInt(document.getElementById('volumes').value, 10);
+
+            if (!destinatario || !pedido || !cidade || isNaN(volumes) || volumes < 1) {
+                etiquetasContainer.innerHTML = '<div class="col-span-full flex items-center justify-center text-red-500">Por favor, preencha todos os campos corretamente.</div>';
+                btnImprimir.disabled = true;
+                setButtonState('default');
+                return;
+            }
+            
+            let currentPageContainer = null;
+            const ETIQUETAS_POR_PAGINA = savedPrintMode === 'a4' ? 6 : 1;
+
+            for (let i = 1; i <= volumes; i++) {
+                if ((i - 1) % ETIQUETAS_POR_PAGINA === 0) {
+                    currentPageContainer = document.createElement('div');
+                    currentPageContainer.classList.add('page-container-screen', 'page-container-print');
+                    etiquetasContainer.appendChild(currentPageContainer);
+                }
+
+                const etiquetaHTML = `
+                    <div class="etiqueta bg-white rounded-lg p-3 border-2 border-gray-400 flex flex-col">
+                        <div style="position: relative; z-index: 1; display: flex; flex-direction: column; height: 100%;">
+                            <div class="flex justify-between items-start mb-2">
+                                <h3 class="text-xl font-bold w-3/4 leading-tight text-black">${destinatario}</h3>
+                                <div class="volume-box bg-black text-white text-center p-1 px-3 rounded-md">
+                                    <span class="font-bold text-xl">${i}/${volumes}</span>
+                                </div>
+                            </div>
+                            <div class="flex-grow">
+                                <p class="text-base text-black"><span class="font-bold text-gray-600">Pedido:</span> ${pedido}</p>
+                                <p class="text-base text-black"><span class="font-bold text-gray-600">Destino:</span> ${cidade}</p>
+                            </div>
+                            <div class="border-t-2 border-dashed border-gray-300 pt-1 text-center">
+                                <p class="font-semibold text-sm text-black">Volume ${i} de ${volumes}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                currentPageContainer.insertAdjacentHTML('beforeend', etiquetaHTML);
+            }
+            btnImprimir.disabled = false;
+            setButtonState('success');
+        };
+
         form.addEventListener('submit', function(event) {
             event.preventDefault();
             setButtonState('loading');
-
-            setTimeout(() => {
-                etiquetasContainer.innerHTML = '';
-                const destinatario = document.getElementById('destinatario').value;
-                const pedido = document.getElementById('pedido').value;
-                const cidade = document.getElementById('cidade').value;
-                const volumes = parseInt(document.getElementById('volumes').value, 10);
-
-                if (!destinatario || !pedido || !cidade || isNaN(volumes) || volumes < 1) {
-                    etiquetasContainer.innerHTML = '<div class="col-span-full flex items-center justify-center text-red-500">Por favor, preencha todos os campos corretamente.</div>';
-                    btnImprimir.disabled = true;
-                    setButtonState('default');
-                    return;
-                }
-                
-                let currentPageContainer = null;
-                const ETIQUETAS_POR_PAGINA = 6;
-
-                for (let i = 1; i <= volumes; i++) {
-                    if ((i - 1) % ETIQUETAS_POR_PAGINA === 0) {
-                        currentPageContainer = document.createElement('div');
-                        currentPageContainer.classList.add('page-container-screen', 'page-container-print');
-                        etiquetasContainer.appendChild(currentPageContainer);
-                    }
-
-                    const etiquetaHTML = `
-                        <div class="etiqueta bg-white rounded-lg p-3 border-2 border-gray-400 flex flex-col">
-                            <div style="position: relative; z-index: 1; display: flex; flex-direction: column; height: 100%;">
-                                <div class="flex justify-between items-start mb-2">
-                                    <h3 class="text-xl font-bold w-3/4 leading-tight text-black">${destinatario}</h3>
-                                    <div class="volume-box bg-black text-white text-center p-1 px-3 rounded-md">
-                                        <span class="font-bold text-xl">${i}/${volumes}</span>
-                                    </div>
-                                </div>
-                                <div class="flex-grow">
-                                    <p class="text-base text-black"><span class="font-bold text-gray-600">Pedido:</span> ${pedido}</p>
-                                    <p class="text-base text-black"><span class="font-bold text-gray-600">Destino:</span> ${cidade}</p>
-                                </div>
-                                <div class="border-t-2 border-dashed border-gray-300 pt-1 text-center">
-                                    <p class="font-semibold text-sm text-black">Volume ${i} de ${volumes}</p>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                    currentPageContainer.insertAdjacentHTML('beforeend', etiquetaHTML);
-                }
-                btnImprimir.disabled = false;
-                setButtonState('success');
-            }, 500);
+            setTimeout(generateLabels, 50);
         });
         
         btnImprimir.addEventListener('click', () => window.print());
