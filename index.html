@@ -47,6 +47,23 @@
         body.thermal-layout .etiqueta { width: 80mm; height: auto; min-height: 45mm; }
         body.thermal-layout .page-container-screen { flex-direction: column; align-items: center; }
 
+        /* Cube animation */
+        #placeholder-icon {
+            transition: transform 0.7s ease-in-out;
+        }
+        #placeholder:hover #placeholder-icon {
+            transform: rotateY(360deg);
+        }
+        
+        /* --- CORREÇÃO AQUI: Icon color on input focus --- */
+        .form-field-group .icon {
+            color: var(--text-muted);
+            transition: color 0.2s ease-in-out;
+        }
+        .form-field-group.is-focused .icon {
+            color: var(--accent-primary);
+        }
+
         @media print {
             .no-print { display: none !important; }
             body { margin: 0; padding: 0; background-color: #fff !important; }
@@ -125,30 +142,30 @@
                     </div>
 
                     <div class="space-y-5">
-                        <div class="space-y-1.5">
+                        <div class="form-field-group space-y-1.5">
                             <label for="destinatario" class="flex items-center gap-2 text-sm font-medium" style="color: var(--text-body);">
-                                <svg class="h-5 w-5" style="color: var(--text-muted);"><use href="#icon-box"></use></svg>
+                                <svg class="icon h-5 w-5"><use href="#icon-box"></use></svg>
                                 <span>Nome do Destinatário</span>
                             </label>
                             <input type="text" id="destinatario" name="destinatario" required class="block w-full px-3 py-2 border rounded-md shadow-sm sm:text-sm" style="background-color: var(--bg-input); border-color: var(--border-primary); color: var(--text-title); --ring-color: var(--accent-primary);" placeholder="Digite o nome completo do destinatário">
                         </div>
-                         <div class="space-y-1.5">
+                         <div class="form-field-group space-y-1.5">
                             <label for="pedido" class="flex items-center gap-2 text-sm font-medium" style="color: var(--text-body);">
-                                <svg class="h-5 w-5" style="color: var(--text-muted);"><use href="#icon-hash"></use></svg>
+                                <svg class="icon h-5 w-5"><use href="#icon-hash"></use></svg>
                                 <span>Número do Pedido</span>
                             </label>
                             <input type="text" id="pedido" name="pedido" required class="block w-full px-3 py-2 border rounded-md shadow-sm sm:text-sm" style="background-color: var(--bg-input); border-color: var(--border-primary); color: var(--text-title); --ring-color: var(--accent-primary);" placeholder="Ex: PED-2024-001">
                         </div>
-                         <div class="space-y-1.5">
+                         <div class="form-field-group space-y-1.5">
                             <label for="cidade" class="flex items-center gap-2 text-sm font-medium" style="color: var(--text-body);">
-                                <svg class="h-5 w-5" style="color: var(--text-muted);"><use href="#icon-map-pin"></use></svg>
+                                <svg class="icon h-5 w-5"><use href="#icon-map-pin"></use></svg>
                                 <span>Cidade de Destino</span>
                             </label>
                             <input type="text" id="cidade" name="cidade" required class="block w-full px-3 py-2 border rounded-md shadow-sm sm:text-sm" style="background-color: var(--bg-input); border-color: var(--border-primary); color: var(--text-title); --ring-color: var(--accent-primary);" placeholder="Digite a cidade de destino">
                         </div>
-                         <div class="space-y-1.5">
+                         <div class="form-field-group space-y-1.5">
                             <label for="volumes" class="flex items-center gap-2 text-sm font-medium" style="color: var(--text-body);">
-                                <svg class="h-5 w-5" style="color: var(--text-muted);"><use href="#icon-box"></use></svg>
+                                <svg class="icon h-5 w-5"><use href="#icon-box"></use></svg>
                                 <span>Quantidade de Volumes</span>
                             </label>
                             <input type="number" id="volumes" name="volumes" required min="1" value="1" class="block w-full px-3 py-2 border rounded-md shadow-sm sm:text-sm" style="background-color: var(--bg-input); border-color: var(--border-primary); color: var(--text-title); --ring-color: var(--accent-primary);" placeholder="Ex: 6">
@@ -179,7 +196,7 @@
                     </div>
                     <div id="etiquetas-container" class="flex-grow overflow-y-auto">
                         <div id="placeholder" class="w-full h-full flex flex-col items-center justify-center text-gray-400">
-                            <svg class="h-24 w-24 text-gray-300"><use href="#icon-cube-placeholder"></use></svg>
+                            <svg id="placeholder-icon" class="h-24 w-24 text-gray-300" style="color: var(--border-primary);"><use href="#icon-cube-placeholder"></use></svg>
                             <p class="mt-4 text-lg">Nenhuma etiqueta gerada ainda</p>
                         </div>
                     </div>
@@ -324,10 +341,23 @@
             form.reset();
             printButtonContainer.innerHTML = '';
             etiquetasContainer.innerHTML = `<div id="placeholder" class="w-full h-full flex flex-col items-center justify-center text-gray-400">
-                            <svg class="h-24 w-24 text-gray-300"><use href="#icon-cube-placeholder"></use></svg>
+                            <svg id="placeholder-icon" class="h-24 w-24 text-gray-300" style="color: var(--border-primary);"><use href="#icon-cube-placeholder"></use></svg>
                             <p class="mt-4 text-lg">Nenhuma etiqueta gerada ainda</p>
                         </div>`;
         });
+
+        // --- FORM FOCUS LOGIC ---
+        const formFieldGroups = document.querySelectorAll('.form-field-group');
+        formFieldGroups.forEach(group => {
+            const input = group.querySelector('input');
+            input.addEventListener('focus', () => {
+                group.classList.add('is-focused');
+            });
+            input.addEventListener('blur', () => {
+                group.classList.remove('is-focused');
+            });
+        });
+
     </script>
 </body>
 </html>
