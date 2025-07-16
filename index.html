@@ -3,155 +3,132 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gerador de Etiquetas para Despacho</title>
+    <title>Gerador de Etiquetas de Despacho</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* --- CSS Variables for Theming --- */
-        :root {
-            --bg-primary: #f3f4f6; --bg-secondary: #ffffff; --bg-form: #ffffff; --bg-input: #ffffff;
-            --text-title: #111827; --text-body: #374151; --text-muted: #4b5563; --text-placeholder: #9ca3af;
-            --border-primary: #d1d5db; --border-secondary: #e5e7eb;
-            --accent-primary: #4f46e5; --accent-primary-hover: #4338ca; --accent-text: #ffffff;
-        }
-        body.dark {
-            --bg-primary: #000000; --bg-secondary: #111111; --bg-form: #111111; --bg-input: #000000;
-            --text-title: #ffffff; --text-body: #d1d5db; --text-muted: #9ca3af; --text-placeholder: #4b5563;
-            --border-primary: #374151; --border-secondary: #1f2937;
-            --accent-primary: #8b5cf6; --accent-primary-hover: #7c3aed; --accent-text: #ffffff;
-        }
         * { box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; background-color: var(--bg-primary); color: var(--text-body); transition: background-color 0.3s, color 0.3s; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f7f8;
+        }
         
         .page-container-screen { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; }
-        .page-container-screen:not(:last-child) { margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 2px dashed var(--border-secondary); }
+        .page-container-screen:not(:last-child) { margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 2px dashed #e5e7eb; }
         
         .etiqueta {
             position: relative;
             transition: all 0.2s ease-in-out;
             box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
             flex-shrink: 0;
-            border: 2px solid var(--border-primary);
+            width: 8.5cm;
+            height: 4.5cm;
+            border: 1px solid #e5e7eb;
         }
         .etiqueta:hover { transform: scale(1.03); box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1); }
         .etiqueta::before { content: ''; position: absolute; top: 5px; left: 5px; right: 5px; bottom: 5px; background-image: url('https://belportas.com.br/wp-content/uploads/2022/05/perfil-linktree.png'); background-position: center; background-repeat: no-repeat; background-size: contain; opacity: 0.1; z-index: 0; }
         
-        /* Screen Layouts */
-        body:not(.thermal-layout) .etiqueta { width: 8.5cm; height: 4.5cm; }
-        body.thermal-layout .etiqueta { width: 80mm; height: auto; min-height: 45mm; }
-        body.thermal-layout .page-container-screen { flex-direction: column; align-items: center; }
-
         @media print {
             .no-print { display: none !important; }
             body { margin: 0; padding: 0; background-color: #fff !important; }
+            #etiquetas-container-wrapper { border: none !important; box-shadow: none !important; padding: 0 !important; }
             #etiquetas-container { padding: 0; box-shadow: none; border: none; }
+            .page-container-print { display: grid; grid-template-columns: repeat(2, 8.5cm); gap: 0.5cm; width: fit-content; margin: 1cm auto; page-break-after: always; }
+            .etiqueta { border: 2px solid #000 !important; page-break-inside: avoid; break-inside: avoid; box-shadow: none; width: 8.5cm !important; height: 4.5cm !important; overflow: hidden; }
             .volume-box, .etiqueta::before { -webkit-print-color-adjust: exact !important; color-adjust: exact !important; }
             .volume-box { background-color: #000 !important; }
-
-            /* A4 Layout (Default) */
-            body:not(.thermal-layout) .page-container-print { display: grid; grid-template-columns: repeat(2, 8.5cm); gap: 0.5cm; width: fit-content; margin: 1cm auto; page-break-after: always; }
-            body:not(.thermal-layout) .etiqueta { border: 2px solid #000 !important; page-break-inside: avoid; break-inside: avoid; box-shadow: none; width: 8.5cm !important; height: 4.5cm !important; overflow: hidden; }
-            
-            /* Thermal Layout */
-            body.thermal-layout #etiquetas-container { display: block; }
-            body.thermal-layout .page-container-print { display: block; margin: 0; page-break-after: avoid; }
-            body.thermal-layout .etiqueta {
-                width: 78mm !important; 
-                height: auto !important; 
-                min-height: 45mm;
-                border: none !important; /* Borda removida para impressão térmica */
-                box-shadow: none;
-                margin: 0;
-                padding: 4mm;
-                page-break-after: always;
-                overflow: hidden;
-            }
-            body.thermal-layout .etiqueta::before { opacity: 0.05; }
-            body.thermal-layout .etiqueta h3 { font-size: 14pt !important; line-height: 1.2 !important; font-weight: 700 !important; }
-            body.thermal-layout .etiqueta p { font-size: 11pt !important; }
-            body.thermal-layout .etiqueta .volume-box { padding: 2mm !important; }
-            body.thermal-layout .etiqueta .volume-box span { font-size: 16pt !important; }
-            body.thermal-layout .etiqueta .border-t-2 { margin-top: 3mm; padding-top: 2mm; }
         }
     </style>
 </head>
-<body>
+<body class="text-gray-800">
 
     <!-- SVG Icons -->
     <svg class="hidden">
-        <symbol id="icon-loader" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="animate-spin"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></symbol>
-        <symbol id="icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></symbol>
-        <symbol id="icon-printer" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></symbol>
-        <symbol id="icon-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></symbol>
-        <symbol id="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></symbol>
-        <symbol id="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></symbol>
+        <symbol id="icon-file-text" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></symbol>
+        <symbol id="icon-user" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></symbol>
+        <symbol id="icon-hash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/></symbol>
+        <symbol id="icon-map-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></symbol>
+        <symbol id="icon-box" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></symbol>
+        <symbol id="icon-tags" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></symbol>
+        <symbol id="icon-cube-placeholder" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></symbol>
     </svg>
 
-    <div class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+    <div class="max-w-6xl mx-auto p-4 sm:p-6 lg:p-8">
         
-        <header class="mb-8 no-print flex justify-between items-start">
-            <div>
-                <h1 class="text-3xl font-bold" style="color: var(--text-title);">Gerador de Etiquetas</h1>
-                <p class="mt-2" style="color: var(--text-muted);">Preencha os dados abaixo para criar as etiquetas de despacho.</p>
-            </div>
-            <div class="flex items-center gap-2">
-                <div id="print-mode-toggle" class="flex border rounded-md" style="border-color: var(--border-primary);">
-                    <button id="btn-a4" class="px-3 py-2 text-sm rounded-l-md" data-mode="a4">Folha A4</button>
-                    <button id="btn-thermal" class="px-3 py-2 text-sm rounded-r-md" data-mode="thermal">Térmica 80mm</button>
-                </div>
-                <button id="theme-toggle" class="p-2 rounded-md" style="color: var(--text-muted); background-color: var(--bg-secondary); border: 1px solid var(--border-primary);">
-                    <svg id="theme-icon-sun" class="h-5 w-5"><use href="#icon-sun"></use></svg>
-                    <svg id="theme-icon-moon" class="h-5 w-5 hidden"><use href="#icon-moon"></use></svg>
-                </button>
-            </div>
+        <header class="mb-10 no-print text-center">
+            <h1 class="text-4xl font-bold text-gray-900">Gerador de Etiquetas de Despacho</h1>
+            <p class="mt-2 text-lg text-gray-600">Sistema para geração automática de etiquetas de envio</p>
         </header>
 
-        <main class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div class="md:col-span-1 no-print">
-                <form id="form-etiqueta" class="p-6 rounded-lg shadow-md space-y-4" style="background-color: var(--bg-form); border: 1px solid var(--border-secondary);">
-                    <div>
-                        <label for="destinatario" class="block text-sm font-medium" style="color: var(--text-body);">Nome do Destinatário</label>
-                        <input type="text" id="destinatario" name="destinatario" required class="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm sm:text-sm" style="background-color: var(--bg-input); border-color: var(--border-primary); color: var(--text-title);" placeholder="Daniel Rios de Souza">
+        <main class="grid grid-cols-1 lg:grid-cols-5 gap-8">
+            <div class="lg:col-span-2 no-print">
+                <form id="form-etiqueta" class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 space-y-6">
+                    <div class="flex items-center gap-3">
+                        <svg class="h-6 w-6 text-gray-500"><use href="#icon-file-text"></use></svg>
+                        <div>
+                            <h2 class="font-semibold text-gray-800">Dados do Pedido</h2>
+                            <p class="text-sm text-gray-500">Preencha as informações para gerar as etiquetas</p>
+                        </div>
                     </div>
-                    <div>
-                        <label for="pedido" class="block text-sm font-medium" style="color: var(--text-body);">Número do Pedido</label>
-                        <input type="text" id="pedido" name="pedido" required class="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm sm:text-sm" style="background-color: var(--bg-input); border-color: var(--border-primary); color: var(--text-title);" placeholder="63096">
-                    </div>
-                    <div>
-                        <label for="cidade" class="block text-sm font-medium" style="color: var(--text-body);">Destino</label>
-                        <input type="text" id="cidade" name="cidade" required class="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm sm:text-sm" style="background-color: var(--bg-input); border-color: var(--border-primary); color: var(--text-title);" placeholder="Retirada">
-                    </div>
-                    <div>
-                        <label for="volumes" class="block text-sm font-bold" style="color: var(--text-body);">Quantidade de Volumes</label>
-                        <input type="number" id="volumes" name="volumes" required min="1" value="1" class="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm sm:text-sm" style="background-color: var(--bg-input); border-color: var(--border-primary); color: var(--text-title);">
+
+                    <div class="space-y-5">
+                        <div class="flex items-start gap-3">
+                            <svg class="h-5 w-5 text-gray-400 mt-1"><use href="#icon-user"></use></svg>
+                            <div class="w-full">
+                                <label for="destinatario" class="block text-sm font-medium text-gray-700">Nome do Destinatário</label>
+                                <input type="text" id="destinatario" name="destinatario" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="Digite o nome completo do destinatário">
+                            </div>
+                        </div>
+                         <div class="flex items-start gap-3">
+                            <svg class="h-5 w-5 text-gray-400 mt-1"><use href="#icon-hash"></use></svg>
+                            <div class="w-full">
+                                <label for="pedido" class="block text-sm font-medium text-gray-700">Número do Pedido</label>
+                                <input type="text" id="pedido" name="pedido" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="Ex: PED-2024-001">
+                            </div>
+                        </div>
+                         <div class="flex items-start gap-3">
+                            <svg class="h-5 w-5 text-gray-400 mt-1"><use href="#icon-map-pin"></use></svg>
+                            <div class="w-full">
+                                <label for="cidade" class="block text-sm font-medium text-gray-700">Cidade de Destino</label>
+                                <input type="text" id="cidade" name="cidade" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="Digite a cidade de destino">
+                            </div>
+                        </div>
+                         <div class="flex items-start gap-3">
+                            <svg class="h-5 w-5 text-gray-400 mt-1"><use href="#icon-box"></use></svg>
+                            <div class="w-full">
+                                <label for="volumes" class="block text-sm font-medium text-gray-700">Quantidade de Volumes</label>
+                                <input type="number" id="volumes" name="volumes" required min="1" value="1" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="Ex: 6">
+                            </div>
+                        </div>
                     </div>
                     
-                    <div class="pt-4 space-y-3">
-                         <button type="submit" id="btn-gerar" class="w-full flex justify-center items-center gap-2 py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2" style="background-color: var(--accent-primary); color: var(--accent-text); --ring-color: var(--accent-primary); --ring-offset-color: var(--bg-form);">
-                            <span class="btn-text">Gerar Etiquetas</span>
-                            <svg class="hidden h-5 w-5" id="spinner-gerar"><use href="#icon-loader"></use></svg>
-                            <svg class="hidden h-5 w-5" id="check-gerar"><use href="#icon-check"></use></svg>
+                    <div class="pt-4 flex items-center gap-4">
+                         <button type="submit" id="btn-gerar" class="w-full flex justify-center items-center gap-2 py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                            Gerar Etiquetas
                         </button>
-                        <div class="grid grid-cols-2 gap-3">
-                            <button type="button" id="btn-imprimir" class="w-full flex justify-center items-center gap-2 py-2 px-4 border rounded-md shadow-sm text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2" style="background-color: var(--bg-secondary); color: var(--text-body); border-color: var(--border-primary); --ring-color: var(--accent-primary); --ring-offset-color: var(--bg-form);" disabled>
-                                <svg class="h-4 w-4"><use href="#icon-printer"></use></svg>
-                                Imprimir
-                            </button>
-                            <button type="button" id="btn-limpar" class="w-full flex justify-center items-center gap-2 py-2 px-4 border rounded-md shadow-sm text-sm font-medium" style="background-color: var(--bg-secondary); color: var(--text-muted); border-color: var(--border-primary); --ring-color: var(--accent-primary); --ring-offset-color: var(--bg-form);">
-                                <svg class="h-4 w-4"><use href="#icon-trash"></use></svg>
-                                Limpar
-                            </button>
-                        </div>
+                        <button type="button" id="btn-limpar" class="w-auto px-4 py-2 border border-gray-300 rounded-lg text-sm font-semibold text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                            Limpar
+                        </button>
                     </div>
                 </form>
             </div>
 
-            <div class="md:col-span-2">
-                <div id="etiquetas-container" class="p-6 rounded-lg shadow-inner min-h-[300px]" style="background-color: var(--bg-secondary); border: 1px solid var(--border-secondary);">
-                    <div id="placeholder" class="col-span-full flex items-center justify-center h-full" style="color: var(--text-placeholder);">
-                        As etiquetas geradas aparecerão aqui para visualização.
+            <div class="lg:col-span-3">
+                <div id="etiquetas-container-wrapper" class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 min-h-[600px] flex flex-col">
+                     <div class="flex items-center gap-3 mb-6 no-print">
+                        <svg class="h-6 w-6 text-gray-500"><use href="#icon-tags"></use></svg>
+                        <div>
+                            <h2 class="font-semibold text-gray-800">Etiquetas Geradas</h2>
+                            <p class="text-sm text-gray-500">As etiquetas aparecerão aqui após o preenchimento do formulário</p>
+                        </div>
+                    </div>
+                    <div id="etiquetas-container" class="flex-grow">
+                        <div id="placeholder" class="w-full h-full flex flex-col items-center justify-center text-gray-400">
+                            <svg class="h-24 w-24 text-gray-300"><use href="#icon-cube-placeholder"></use></svg>
+                            <p class="mt-4 text-lg">Nenhuma etiqueta gerada ainda</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -159,98 +136,14 @@
     </div>
 
     <script>
-        // --- SAFE LOCALSTORAGE WRAPPERS ---
-        function getFromLocalStorage(key, defaultValue) {
-            try {
-                const value = localStorage.getItem(key);
-                return value ? value : defaultValue;
-            } catch (e) {
-                console.warn(`Could not read from localStorage: ${e.message}`);
-                return defaultValue;
-            }
-        }
-
-        function setToLocalStorage(key, value) {
-            try {
-                localStorage.setItem(key, value);
-            } catch (e) {
-                console.warn(`Could not write to localStorage: ${e.message}`);
-            }
-        }
-
-        // --- THEME & LAYOUT SWITCHER LOGIC ---
-        const themeToggle = document.getElementById('theme-toggle');
-        const sunIcon = document.getElementById('theme-icon-sun');
-        const moonIcon = document.getElementById('theme-icon-moon');
-        const btnA4 = document.getElementById('btn-a4');
-        const btnThermal = document.getElementById('btn-thermal');
         const form = document.getElementById('form-etiqueta');
         const etiquetasContainer = document.getElementById('etiquetas-container');
         const btnGerar = document.getElementById('btn-gerar');
-        const btnImprimir = document.getElementById('btn-imprimir');
         const btnLimpar = document.getElementById('btn-limpar');
 
-        const applyTheme = (theme) => {
-            document.body.classList.toggle('dark', theme === 'dark');
-            sunIcon.classList.toggle('hidden', theme === 'dark');
-            moonIcon.classList.toggle('hidden', theme !== 'dark');
-        };
-
-        const applyPrintMode = (mode) => {
-            document.body.classList.toggle('thermal-layout', mode === 'thermal');
-            btnA4.style.backgroundColor = mode === 'a4' ? 'var(--accent-primary)' : 'transparent';
-            btnA4.style.color = mode === 'a4' ? 'var(--accent-text)' : 'var(--text-muted)';
-            btnThermal.style.backgroundColor = mode === 'thermal' ? 'var(--accent-primary)' : 'transparent';
-            btnThermal.style.color = mode === 'thermal' ? 'var(--accent-text)' : 'var(--text-muted)';
-        };
-        
-        const savedTheme = getFromLocalStorage('theme', 'light');
-        applyTheme(savedTheme);
-        
-        let savedPrintMode = getFromLocalStorage('printMode', 'a4');
-        applyPrintMode(savedPrintMode);
-
-        themeToggle.addEventListener('click', () => {
-            const newTheme = document.body.classList.contains('dark') ? 'light' : 'dark';
-            setToLocalStorage('theme', newTheme);
-            applyTheme(newTheme);
-        });
-
-        const handlePrintModeChange = (mode) => {
-            if (savedPrintMode === mode) return;
-            savedPrintMode = mode;
-            setToLocalStorage('printMode', mode);
-            applyPrintMode(mode);
-            // Re-render labels if they exist
-            if (etiquetasContainer.querySelector('.etiqueta')) {
-                form.dispatchEvent(new Event('submit', { 'bubbles': true, 'cancelable': true }));
-            }
-        };
-
-        btnA4.addEventListener('click', () => handlePrintModeChange('a4'));
-        btnThermal.addEventListener('click', () => handlePrintModeChange('thermal'));
-
-        // --- GENERATION SCRIPT ---
-        function setButtonState(state) {
-            const btnText = btnGerar.querySelector('.btn-text');
-            const spinner = btnGerar.querySelector('#spinner-gerar');
-            const check = btnGerar.querySelector('#check-gerar');
-            btnGerar.disabled = true;
-            [btnText, spinner, check].forEach(el => el.classList.add('hidden'));
-
-            if (state === 'loading') spinner.classList.remove('hidden');
-            else if (state === 'success') {
-                btnText.textContent = 'Etiquetas Geradas!';
-                [btnText, check].forEach(el => el.classList.remove('hidden'));
-                setTimeout(() => setButtonState('default'), 2000);
-            } else {
-                btnText.textContent = 'Gerar Etiquetas';
-                btnText.classList.remove('hidden');
-                btnGerar.disabled = false;
-            }
-        }
-
-        const generateLabels = () => {
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+            
             etiquetasContainer.innerHTML = '';
             const destinatario = document.getElementById('destinatario').value;
             const pedido = document.getElementById('pedido').value;
@@ -259,13 +152,11 @@
 
             if (!destinatario || !pedido || !cidade || isNaN(volumes) || volumes < 1) {
                 etiquetasContainer.innerHTML = '<div class="col-span-full flex items-center justify-center text-red-500">Por favor, preencha todos os campos corretamente.</div>';
-                btnImprimir.disabled = true;
-                setButtonState('default');
                 return;
             }
             
             let currentPageContainer = null;
-            const ETIQUETAS_POR_PAGINA = savedPrintMode === 'a4' ? 6 : 1;
+            const ETIQUETAS_POR_PAGINA = 6;
 
             for (let i = 1; i <= volumes; i++) {
                 if ((i - 1) % ETIQUETAS_POR_PAGINA === 0) {
@@ -295,22 +186,27 @@
                 `;
                 currentPageContainer.insertAdjacentHTML('beforeend', etiquetaHTML);
             }
-            btnImprimir.disabled = false;
-            setButtonState('success');
-        };
-
-        form.addEventListener('submit', function(event) {
-            event.preventDefault();
-            setButtonState('loading');
-            setTimeout(generateLabels, 50);
+            // Add a print button after generating labels
+            const printButtonHTML = `
+                <div class="w-full mt-6 text-center no-print">
+                    <button onclick="window.print()" class="px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                        Imprimir Etiquetas
+                    </button>
+                </div>
+            `;
+            etiquetasContainer.insertAdjacentHTML('afterend', printButtonHTML);
         });
         
-        btnImprimir.addEventListener('click', () => window.print());
-
         btnLimpar.addEventListener('click', function() {
             form.reset();
-            etiquetasContainer.innerHTML = `<div id="placeholder" class="col-span-full flex items-center justify-center h-full" style="color: var(--text-placeholder);">As etiquetas geradas aparecerão aqui para visualização.</div>`;
-            btnImprimir.disabled = true;
+            etiquetasContainer.innerHTML = `<div id="placeholder" class="w-full h-full flex flex-col items-center justify-center text-gray-400">
+                            <svg class="h-24 w-24 text-gray-300"><use href="#icon-cube-placeholder"></use></svg>
+                            <p class="mt-4 text-lg">Nenhuma etiqueta gerada ainda</p>
+                        </div>`;
+            const printButton = etiquetasContainer.nextElementSibling;
+            if (printButton && printButton.classList.contains('no-print')) {
+                printButton.remove();
+            }
         });
     </script>
 </body>
