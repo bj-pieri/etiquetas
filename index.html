@@ -55,7 +55,7 @@
             transform: rotateY(360deg);
         }
         
-        /* --- CORREÇÃO AQUI: Icon color on input focus --- */
+        /* Icon and Label color on input focus */
         .form-field-group .icon {
             color: var(--text-muted);
             transition: color 0.2s ease-in-out;
@@ -73,7 +73,14 @@
             .volume-box { background-color: #000 !important; }
 
             /* A4 Layout (Default) */
-            body:not(.thermal-layout) .page-container-print { display: grid; grid-template-columns: repeat(2, 8.5cm); gap: 0.5cm; width: fit-content; margin: 1cm auto; page-break-after: always; }
+            body:not(.thermal-layout) .page-container-print { 
+                display: grid; 
+                grid-template-columns: repeat(2, 8.5cm); 
+                gap: 0.5cm; 
+                width: fit-content; 
+                margin: 1cm 0.7cm; /* Margem ajustada para evitar corte */
+                page-break-after: always; 
+            }
             body:not(.thermal-layout) .etiqueta { border: 2px solid #000 !important; page-break-inside: avoid; break-inside: avoid; box-shadow: none; width: 8.5cm !important; height: 4.5cm !important; overflow: hidden; }
             
             /* Thermal Layout */
@@ -143,30 +150,30 @@
 
                     <div class="space-y-5">
                         <div class="form-field-group space-y-1.5">
-                            <label for="destinatario" class="flex items-center gap-2 text-sm font-medium" style="color: var(--text-body);">
+                            <label for="destinatario" class="flex items-center gap-2 text-sm font-medium">
                                 <svg class="icon h-5 w-5"><use href="#icon-box"></use></svg>
-                                <span>Nome do Destinatário</span>
+                                <span class="label-text">Nome do Destinatário</span>
                             </label>
                             <input type="text" id="destinatario" name="destinatario" required class="block w-full px-3 py-2 border rounded-md shadow-sm sm:text-sm" style="background-color: var(--bg-input); border-color: var(--border-primary); color: var(--text-title); --ring-color: var(--accent-primary);" placeholder="Digite o nome completo do destinatário">
                         </div>
                          <div class="form-field-group space-y-1.5">
-                            <label for="pedido" class="flex items-center gap-2 text-sm font-medium" style="color: var(--text-body);">
+                            <label for="pedido" class="flex items-center gap-2 text-sm font-medium">
                                 <svg class="icon h-5 w-5"><use href="#icon-hash"></use></svg>
-                                <span>Número do Pedido</span>
+                                <span class="label-text">Número do Pedido</span>
                             </label>
                             <input type="text" id="pedido" name="pedido" required class="block w-full px-3 py-2 border rounded-md shadow-sm sm:text-sm" style="background-color: var(--bg-input); border-color: var(--border-primary); color: var(--text-title); --ring-color: var(--accent-primary);" placeholder="Ex: PED-2024-001">
                         </div>
                          <div class="form-field-group space-y-1.5">
-                            <label for="cidade" class="flex items-center gap-2 text-sm font-medium" style="color: var(--text-body);">
+                            <label for="cidade" class="flex items-center gap-2 text-sm font-medium">
                                 <svg class="icon h-5 w-5"><use href="#icon-map-pin"></use></svg>
-                                <span>Cidade de Destino</span>
+                                <span class="label-text">Cidade de Destino</span>
                             </label>
                             <input type="text" id="cidade" name="cidade" required class="block w-full px-3 py-2 border rounded-md shadow-sm sm:text-sm" style="background-color: var(--bg-input); border-color: var(--border-primary); color: var(--text-title); --ring-color: var(--accent-primary);" placeholder="Digite a cidade de destino">
                         </div>
                          <div class="form-field-group space-y-1.5">
-                            <label for="volumes" class="flex items-center gap-2 text-sm font-medium" style="color: var(--text-body);">
+                            <label for="volumes" class="flex items-center gap-2 text-sm font-medium">
                                 <svg class="icon h-5 w-5"><use href="#icon-box"></use></svg>
-                                <span>Quantidade de Volumes</span>
+                                <span class="label-text">Quantidade de Volumes</span>
                             </label>
                             <input type="number" id="volumes" name="volumes" required min="1" value="1" class="block w-full px-3 py-2 border rounded-md shadow-sm sm:text-sm" style="background-color: var(--bg-input); border-color: var(--border-primary); color: var(--text-title); --ring-color: var(--accent-primary);" placeholder="Ex: 6">
                         </div>
