@@ -125,7 +125,7 @@
                 box-shadow: none;
                 margin: 0;
                 padding: 4mm;
-                page-break-after: always;
+                page-break-after: always; 
             }
             body.thermal-layout .etiqueta h3 { font-size: 14pt !important; line-height: 1.2 !important; font-weight: 700 !important; }
             body.thermal-layout .etiqueta p { font-size: 11pt !important; }
@@ -186,21 +186,21 @@
                                 <svg class="icon h-4 w-4"><use href="#icon-user"></use></svg>
                                 <span>Nome do Destinatário</span>
                             </label>
-                            <input type="text" id="destinatario" name="destinatario" required class="block w-full px-3 py-2 border rounded-md shadow-sm sm:text-sm focus:ring-1 outline-none transition" style="background-color: var(--bg-input); border-color: var(--border-primary); color: var(--text-title);" placeholder="Ex: Daniel Rios de Souza">
+                            <input type="text" id="destinatario" name="destinatario" required class="block w-full px-3 py-2 border rounded-md shadow-sm sm:text-sm focus:ring-1 outline-none transition" style="background-color: var(--bg-input); border-color: var(--border-primary); color: var(--text-title);" placeholder="Ex: TechSolutions Logística Ltda (A/C Roberto)">
                         </div>
                          <div class="form-field-group space-y-1">
                             <label for="pedido" class="flex items-center gap-2 text-sm font-medium" style="color: var(--text-body);">
                                 <svg class="icon h-4 w-4"><use href="#icon-hash"></use></svg>
                                 <span>Número do Pedido</span>
                             </label>
-                            <input type="text" id="pedido" name="pedido" required class="block w-full px-3 py-2 border rounded-md shadow-sm sm:text-sm focus:ring-1 outline-none transition" style="background-color: var(--bg-input); border-color: var(--border-primary); color: var(--text-title);" placeholder="Ex: 63096">
+                            <input type="text" id="pedido" name="pedido" required class="block w-full px-3 py-2 border rounded-md shadow-sm sm:text-sm focus:ring-1 outline-none transition" style="background-color: var(--bg-input); border-color: var(--border-primary); color: var(--text-title);" placeholder="Ex: PO-2026/859">
                         </div>
                          <div class="form-field-group space-y-1">
                             <label for="cidade" class="flex items-center gap-2 text-sm font-medium" style="color: var(--text-body);">
                                 <svg class="icon h-4 w-4"><use href="#icon-map-pin"></use></svg>
                                 <span>Cidade de Destino</span>
                             </label>
-                            <input type="text" id="cidade" name="cidade" required class="block w-full px-3 py-2 border rounded-md shadow-sm sm:text-sm focus:ring-1 outline-none transition" style="background-color: var(--bg-input); border-color: var(--border-primary); color: var(--text-title);" placeholder="Ex: Saquarema - RJ">
+                            <input type="text" id="cidade" name="cidade" required class="block w-full px-3 py-2 border rounded-md shadow-sm sm:text-sm focus:ring-1 outline-none transition" style="background-color: var(--bg-input); border-color: var(--border-primary); color: var(--text-title);" placeholder="Ex: São Paulo - SP">
                         </div>
                          <div class="form-field-group space-y-1">
                             <label for="volumes" class="flex items-center gap-2 text-sm font-medium" style="color: var(--text-body);">
@@ -214,7 +214,7 @@
                                 <svg class="icon h-4 w-4"><use href="#icon-calendar"></use></svg>
                                 <span>Data de Despacho</span>
                             </label>
-                            <input type="text" id="form-date" name="form-date" required class="block w-full px-3 py-2 border rounded-md shadow-sm sm:text-sm focus:ring-1 outline-none transition" style="background-color: var(--bg-input); border-color: var(--border-primary); color: var(--text-title);" placeholder="DD/MM/AAAA">
+                            <input type="date" id="form-date" name="form-date" required class="block w-full px-3 py-2 border rounded-md shadow-sm sm:text-sm focus:ring-1 outline-none transition" style="background-color: var(--bg-input); border-color: var(--border-primary); color: var(--text-title);">
                         </div>
                     </div>
                     
@@ -227,15 +227,6 @@
                         </button>
                     </div>
                 </form>
-
-                <!-- Feedback do Gemini -->
-                <div id="dicas-container" class="mt-6 bg-white p-4 rounded-2xl shadow-sm border no-print hidden" style="background-color: var(--bg-form); border-color: var(--border-secondary);">
-                    <h3 class="flex items-center gap-2 font-bold text-sm mb-2" style="color: var(--text-title);">
-                        <svg class="h-4 w-4" style="color: var(--accent-primary);"><use href="#icon-sparkles"></use></svg>
-                        Insights Gemini
-                    </h3>
-                    <p id="dicas-content" class="text-xs leading-relaxed italic" style="color: var(--text-body);"></p>
-                </div>
             </div>
 
             <!-- Área das Etiquetas (Crescimento Dinâmico) -->
@@ -281,12 +272,14 @@
         const form = document.getElementById('form-etiqueta');
         const etiquetasContainer = document.getElementById('etiquetas-container');
         const printButtonContainer = document.getElementById('print-button-container');
-        const dicasContainer = document.getElementById('dicas-container');
-        const dicasContent = document.getElementById('dicas-content');
         const dateInput = document.getElementById('form-date');
 
-        // Data padrão (Hoje)
-        const today = new Date().toLocaleDateString('pt-BR');
+        // Data padrão (Hoje) para input type="date" (YYYY-MM-DD)
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        const today = `${year}-${month}-${day}`;
         dateInput.value = today;
 
         // --- LÓGICA DE TEMA ---
@@ -327,46 +320,20 @@
         btnA4.addEventListener('click', () => handlePrintModeChange('a4'));
         btnThermal.addEventListener('click', () => handlePrintModeChange('thermal'));
 
-        // --- INTEGRAÇÃO API GEMINI ---
-        async function fetchGeminiInsights(cidade) {
-            const apiKey = ""; // Chave fornecida pelo ambiente
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
-            
-            dicasContainer.classList.remove('hidden');
-            dicasContent.textContent = "A IA está a analisar o destino...";
-
-            const prompt = `És um especialista em logística. Dá uma dica curta (máximo 15 palavras) sobre o envio de encomendas para a cidade de ${cidade}, no Brasil. Pode ser sobre prazos, embalagem ou transportadoras regionais.`;
-
-            const makeRequest = async (retries = 3) => {
-                try {
-                    const response = await fetch(url, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
-                    });
-                    if (!response.ok) throw new Error();
-                    const data = await response.json();
-                    return data.candidates?.[0]?.content?.parts?.[0]?.text;
-                } catch (e) {
-                    if (retries > 0) {
-                        await new Promise(r => setTimeout(r, 2000));
-                        return makeRequest(retries - 1);
-                    }
-                    return "Não foi possível carregar insights logísticos agora.";
-                }
-            };
-
-            const result = await makeRequest();
-            dicasContent.textContent = result;
-        }
-
         // --- GERAÇÃO DE ETIQUETAS ---
         const generateLabels = () => {
             const destinatario = document.getElementById('destinatario').value;
             const pedido = document.getElementById('pedido').value;
             const cidade = document.getElementById('cidade').value;
             const volumes = parseInt(document.getElementById('volumes').value, 10);
-            const labelDate = dateInput.value;
+            
+            // Formatar Data para Visualização (DD/MM/AAAA)
+            const rawDate = dateInput.value;
+            let labelDate = rawDate;
+            if (rawDate && rawDate.includes('-')) {
+                const [y, m, d] = rawDate.split('-');
+                labelDate = `${d}/${m}/${y}`;
+            }
 
             if (!destinatario || !pedido || !cidade || isNaN(volumes) || volumes < 1) {
                 // Em vez de alert(), usamos uma mensagem no container
@@ -420,9 +387,6 @@
             printBtn.innerHTML = "Imprimir Agora";
             printBtn.onclick = () => window.print();
             printButtonContainer.appendChild(printBtn);
-
-            // Insights da IA
-            fetchGeminiInsights(cidade);
         };
 
         // --- LISTENERS DE EVENTO ---
@@ -435,7 +399,6 @@
             form.reset();
             dateInput.value = today;
             printButtonContainer.innerHTML = '';
-            dicasContainer.classList.add('hidden');
             etiquetasContainer.innerHTML = `
                 <div id="placeholder" class="w-full h-full flex flex-col items-center justify-center text-gray-400 py-12">
                     <svg id="placeholder-icon" class="h-20 w-20 opacity-30" style="color: var(--accent-primary);"><use href="#icon-cube-placeholder"></use></svg>
