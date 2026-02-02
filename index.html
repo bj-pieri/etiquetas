@@ -100,9 +100,11 @@
             body:not(.thermal-layout) .page-container-print { 
                 display: grid; 
                 grid-template-columns: repeat(2, 8.5cm); 
-                gap: 0.5cm; 
+                /* Gap ajustado para 0.3cm para economizar espaço vertical */
+                gap: 0.3cm; 
                 width: fit-content; 
-                margin: 1cm 0.7cm; 
+                /* Margem ajustada para garantir 5 linhas por página */
+                margin: 0.5cm 0.5cm; 
                 page-break-after: always; 
             }
             body:not(.thermal-layout) .etiqueta { 
@@ -344,7 +346,8 @@
             etiquetasContainer.innerHTML = '';
             printButtonContainer.innerHTML = '';
             
-            const ETIQUETAS_POR_PAGINA = savedPrintMode === 'a4' ? 6 : 1;
+            // MUDANÇA: Aumentado de 6 para 10 etiquetas por página
+            const ETIQUETAS_POR_PAGINA = savedPrintMode === 'a4' ? 10 : 1;
             
             for (let i = 1; i <= volumes; i++) {
                 let pageIndex = Math.ceil(i / ETIQUETAS_POR_PAGINA);
