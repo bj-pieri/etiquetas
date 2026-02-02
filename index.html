@@ -9,26 +9,28 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* --- CSS Variables for Theming --- */
+        /* --- Variáveis de Tema --- */
         :root {
             --bg-primary: #f7f7f8; --bg-secondary: #ffffff; --bg-form: #ffffff; --bg-input: #ffffff;
             --text-title: #111827; --text-body: #4a5568; --text-muted: #718096;
             --border-primary: #e2e8f0; --border-secondary: #edf2f7;
-            --accent-primary: #4f46e6; /* User's requested color */
-            --accent-primary-hover: #4338ca; /* Darker version for hover */
+            --accent-primary: #4f46e6; 
+            --accent-primary-hover: #4338ca;
             --accent-text: #ffffff;
         }
         body.dark {
             --bg-primary: #000000; --bg-secondary: #111111; --bg-form: #111111; --bg-input: #000000;
             --text-title: #ffffff; --text-body: #a0aec0; --text-muted: #718096;
             --border-primary: #2d3748; --border-secondary: #1a202c;
-            --accent-primary: #818cf8; /* Lighter version for dark mode */
-            --accent-primary-hover: #6366f1; /* Slightly darker hover for dark mode */
+            --accent-primary: #818cf8;
+            --accent-primary-hover: #6366f1;
             --accent-text: #ffffff;
         }
+
         * { box-sizing: border-box; }
         body { font-family: 'Inter', sans-serif; background-color: var(--bg-primary); color: var(--text-body); transition: background-color 0.3s, color 0.3s; }
         
+        /* Layout de Pré-visualização no ecrã */
         .page-container-screen { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; }
         .page-container-screen:not(:last-child) { margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 2px dashed var(--border-secondary); }
         
@@ -38,32 +40,53 @@
             box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
             flex-shrink: 0;
             border: 1px solid var(--border-secondary);
+            background-color: white;
+            overflow: hidden;
         }
         .etiqueta:hover { transform: scale(1.03); box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1); }
-        .etiqueta::before { content: ''; position: absolute; top: 5px; left: 5px; right: 5px; bottom: 5px; background-image: url('https://belportas.com.br/wp-content/uploads/2022/05/perfil-linktree.png'); background-position: center; background-repeat: no-repeat; background-size: contain; opacity: 0.1; z-index: 0; }
         
-        /* Screen Layouts */
+        /* Logótipo de fundo (Belportas) */
+        .etiqueta::before { 
+            content: ''; position: absolute; top: 5px; left: 5px; right: 5px; bottom: 5px; 
+            background-image: url('https://belportas.com.br/wp-content/uploads/2022/05/perfil-linktree.png'); 
+            background-position: center; background-repeat: no-repeat; background-size: contain; 
+            opacity: 0.1; z-index: 0; 
+        }
+        
+        /* Ajustes de tamanhos conforme o modo */
         body:not(.thermal-layout) .etiqueta { width: 8.5cm; height: 4.5cm; }
         body.thermal-layout .etiqueta { width: 80mm; height: auto; min-height: 45mm; }
         body.thermal-layout .page-container-screen { flex-direction: column; align-items: center; }
 
-        /* Cube animation */
-        #placeholder-icon {
-            transition: transform 0.7s ease-in-out;
-        }
-        #placeholder:hover #placeholder-icon {
-            transform: rotateY(360deg);
-        }
+        /* Animação do Ícone de Cubo */
+        #placeholder-icon { transition: transform 0.7s ease-in-out; }
+        #placeholder:hover #placeholder-icon { transform: rotateY(360deg); }
         
-        /* Icon and Label color on input focus */
-        .form-field-group .icon {
-            color: var(--text-muted);
-            transition: color 0.2s ease-in-out;
+        /* Destaque do Ícone no Focus */
+        .form-field-group .icon { color: var(--text-muted); transition: color 0.2s ease-in-out; }
+        .form-field-group.is-focused .icon { color: var(--accent-primary); }
+
+        /* Carimbo de data editável na etiqueta */
+        .data-stamp {
+            position: absolute;
+            bottom: 8px;
+            left: 12px;
+            font-size: 10px;
+            color: #666;
+            z-index: 10;
+            background: transparent;
+            border: none;
+            width: 100px;
+            outline: none;
+            font-weight: 500;
         }
-        .form-field-group.is-focused .icon {
+        .data-stamp:hover, .data-stamp:focus {
             color: var(--accent-primary);
+            background: rgba(79, 70, 230, 0.05);
+            border-radius: 2px;
         }
 
+        /* --- Estilos de Impressão --- */
         @media print {
             .no-print { display: none !important; }
             body { margin: 0; padding: 0; background-color: #fff !important; }
@@ -71,19 +94,27 @@
             #etiquetas-container { padding: 0; box-shadow: none; border: none; }
             .volume-box, .etiqueta::before { -webkit-print-color-adjust: exact !important; color-adjust: exact !important; }
             .volume-box { background-color: #000 !important; }
+            .data-stamp { color: #000 !important; visibility: visible !important; }
 
-            /* A4 Layout (Default) */
+            /* Modo Folha A4 */
             body:not(.thermal-layout) .page-container-print { 
                 display: grid; 
                 grid-template-columns: repeat(2, 8.5cm); 
                 gap: 0.5cm; 
                 width: fit-content; 
-                margin: 1cm 0.7cm; /* Margem ajustada para evitar corte */
+                margin: 1cm 0.7cm; 
                 page-break-after: always; 
             }
-            body:not(.thermal-layout) .etiqueta { border: 2px solid #000 !important; page-break-inside: avoid; break-inside: avoid; box-shadow: none; width: 8.5cm !important; height: 4.5cm !important; overflow: hidden; }
+            body:not(.thermal-layout) .etiqueta { 
+                border: 2px solid #000 !important; 
+                page-break-inside: avoid; 
+                break-inside: avoid; 
+                box-shadow: none; 
+                width: 8.5cm !important; 
+                height: 4.5cm !important; 
+            }
             
-            /* Thermal Layout */
+            /* Modo Térmica 80mm */
             body.thermal-layout #etiquetas-container { display: block; }
             body.thermal-layout .page-container-print { display: block; margin: 0; page-break-after: avoid; }
             body.thermal-layout .etiqueta {
@@ -95,9 +126,7 @@
                 margin: 0;
                 padding: 4mm;
                 page-break-after: always;
-                overflow: hidden;
             }
-            body.thermal-layout .etiqueta::before { opacity: 0.05; }
             body.thermal-layout .etiqueta h3 { font-size: 14pt !important; line-height: 1.2 !important; font-weight: 700 !important; }
             body.thermal-layout .etiqueta p { font-size: 11pt !important; }
             body.thermal-layout .etiqueta .volume-box { padding: 2mm !important; }
@@ -106,9 +135,9 @@
         }
     </style>
 </head>
-<body>
+<body class="text-gray-800">
 
-    <!-- SVG Icons -->
+    <!-- Definições de Ícones SVG -->
     <svg class="hidden">
         <symbol id="icon-file-text" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></symbol>
         <symbol id="icon-user" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></symbol>
@@ -119,6 +148,8 @@
         <symbol id="icon-cube-placeholder" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></symbol>
         <symbol id="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></symbol>
         <symbol id="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></symbol>
+        <symbol id="icon-sparkles" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3L9.27 9.27L3 12l6.27 2.73L12 21l2.73-6.27L21 12l-6.27-2.73z"/></symbol>
+        <symbol id="icon-calendar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></symbol>
     </svg>
 
     <div class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
@@ -126,14 +157,14 @@
         <header class="mb-8 no-print flex justify-between items-center">
             <div class="text-left">
                 <h1 class="text-3xl font-bold" style="color: var(--text-title);">Gerador de Etiquetas</h1>
-                <p class="mt-1 text-base" style="color: var(--text-muted);">Geração automática de etiquetas de envio</p>
+                <p class="mt-1 text-base" style="color: var(--text-muted);">Geração automática de etiquetas de despacho</p>
             </div>
             <div class="flex items-center gap-2">
                 <div id="print-mode-toggle" class="flex border rounded-md" style="border-color: var(--border-primary);">
-                    <button id="btn-a4" class="px-3 py-1.5 text-xs" data-mode="a4">Folha A4</button>
-                    <button id="btn-thermal" class="px-3 py-1.5 text-xs" data-mode="thermal">Térmica</button>
+                    <button id="btn-a4" class="px-4 py-2 text-xs font-semibold rounded-l-md transition" data-mode="a4">Folha A4</button>
+                    <button id="btn-thermal" class="px-4 py-2 text-xs font-semibold rounded-r-md transition" data-mode="thermal">Térmica 80mm</button>
                 </div>
-                <button id="theme-toggle" class="p-2 rounded-md" style="color: var(--text-muted); background-color: var(--bg-secondary); border: 1px solid var(--border-primary);">
+                <button id="theme-toggle" class="p-2 rounded-md transition" style="color: var(--text-muted); background-color: var(--bg-secondary); border: 1px solid var(--border-primary);">
                     <svg id="theme-icon-sun" class="h-5 w-5"><use href="#icon-sun"></use></svg>
                     <svg id="theme-icon-moon" class="h-5 w-5 hidden"><use href="#icon-moon"></use></svg>
                 </button>
@@ -141,6 +172,7 @@
         </header>
 
         <main class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+            <!-- Formulário de Entrada -->
             <div class="lg:col-span-1 no-print">
                 <form id="form-etiqueta" class="bg-white p-6 rounded-2xl shadow-sm border" style="background-color: var(--bg-form); border-color: var(--border-secondary);">
                     <div class="flex flex-col items-center gap-2 mb-6 text-center">
@@ -148,92 +180,99 @@
                         <h2 class="font-semibold text-lg" style="color: var(--text-title);">Dados do Pedido</h2>
                     </div>
 
-                    <div class="space-y-5">
-                        <div class="form-field-group space-y-1.5">
-                            <label for="destinatario" class="flex items-center gap-2 text-sm font-medium">
-                                <svg class="icon h-5 w-5"><use href="#icon-box"></use></svg>
-                                <span class="label-text">Nome do Destinatário</span>
+                    <div class="space-y-4">
+                        <div class="form-field-group space-y-1">
+                            <label for="destinatario" class="flex items-center gap-2 text-sm font-medium" style="color: var(--text-body);">
+                                <svg class="icon h-4 w-4"><use href="#icon-user"></use></svg>
+                                <span>Nome do Destinatário</span>
                             </label>
-                            <input type="text" id="destinatario" name="destinatario" required class="block w-full px-3 py-2 border rounded-md shadow-sm sm:text-sm" style="background-color: var(--bg-input); border-color: var(--border-primary); color: var(--text-title); --ring-color: var(--accent-primary);" placeholder="Digite o nome completo do destinatário">
+                            <input type="text" id="destinatario" name="destinatario" required class="block w-full px-3 py-2 border rounded-md shadow-sm sm:text-sm focus:ring-1 outline-none transition" style="background-color: var(--bg-input); border-color: var(--border-primary); color: var(--text-title);" placeholder="Ex: Daniel Rios de Souza">
                         </div>
-                         <div class="form-field-group space-y-1.5">
-                            <label for="pedido" class="flex items-center gap-2 text-sm font-medium">
-                                <svg class="icon h-5 w-5"><use href="#icon-hash"></use></svg>
-                                <span class="label-text">Número do Pedido</span>
+                         <div class="form-field-group space-y-1">
+                            <label for="pedido" class="flex items-center gap-2 text-sm font-medium" style="color: var(--text-body);">
+                                <svg class="icon h-4 w-4"><use href="#icon-hash"></use></svg>
+                                <span>Número do Pedido</span>
                             </label>
-                            <input type="text" id="pedido" name="pedido" required class="block w-full px-3 py-2 border rounded-md shadow-sm sm:text-sm" style="background-color: var(--bg-input); border-color: var(--border-primary); color: var(--text-title); --ring-color: var(--accent-primary);" placeholder="Ex: PED-2024-001">
+                            <input type="text" id="pedido" name="pedido" required class="block w-full px-3 py-2 border rounded-md shadow-sm sm:text-sm focus:ring-1 outline-none transition" style="background-color: var(--bg-input); border-color: var(--border-primary); color: var(--text-title);" placeholder="Ex: 63096">
                         </div>
-                         <div class="form-field-group space-y-1.5">
-                            <label for="cidade" class="flex items-center gap-2 text-sm font-medium">
-                                <svg class="icon h-5 w-5"><use href="#icon-map-pin"></use></svg>
-                                <span class="label-text">Cidade de Destino</span>
+                         <div class="form-field-group space-y-1">
+                            <label for="cidade" class="flex items-center gap-2 text-sm font-medium" style="color: var(--text-body);">
+                                <svg class="icon h-4 w-4"><use href="#icon-map-pin"></use></svg>
+                                <span>Cidade de Destino</span>
                             </label>
-                            <input type="text" id="cidade" name="cidade" required class="block w-full px-3 py-2 border rounded-md shadow-sm sm:text-sm" style="background-color: var(--bg-input); border-color: var(--border-primary); color: var(--text-title); --ring-color: var(--accent-primary);" placeholder="Digite a cidade de destino">
+                            <input type="text" id="cidade" name="cidade" required class="block w-full px-3 py-2 border rounded-md shadow-sm sm:text-sm focus:ring-1 outline-none transition" style="background-color: var(--bg-input); border-color: var(--border-primary); color: var(--text-title);" placeholder="Ex: Saquarema - RJ">
                         </div>
-                         <div class="form-field-group space-y-1.5">
-                            <label for="volumes" class="flex items-center gap-2 text-sm font-medium">
-                                <svg class="icon h-5 w-5"><use href="#icon-box"></use></svg>
-                                <span class="label-text">Quantidade de Volumes</span>
+                         <div class="form-field-group space-y-1">
+                            <label for="volumes" class="flex items-center gap-2 text-sm font-medium" style="color: var(--text-body);">
+                                <svg class="icon h-4 w-4"><use href="#icon-box"></use></svg>
+                                <span>Quantidade de Volumes</span>
                             </label>
-                            <input type="number" id="volumes" name="volumes" required min="1" value="1" class="block w-full px-3 py-2 border rounded-md shadow-sm sm:text-sm" style="background-color: var(--bg-input); border-color: var(--border-primary); color: var(--text-title); --ring-color: var(--accent-primary);" placeholder="Ex: 6">
+                            <input type="number" id="volumes" name="volumes" required min="1" value="1" class="block w-full px-3 py-2 border rounded-md shadow-sm sm:text-sm focus:ring-1 outline-none transition" style="background-color: var(--bg-input); border-color: var(--border-primary); color: var(--text-title);">
+                        </div>
+                        <div class="form-field-group space-y-1">
+                            <label for="form-date" class="flex items-center gap-2 text-sm font-medium" style="color: var(--text-body);">
+                                <svg class="icon h-4 w-4"><use href="#icon-calendar"></use></svg>
+                                <span>Data de Despacho</span>
+                            </label>
+                            <input type="text" id="form-date" name="form-date" required class="block w-full px-3 py-2 border rounded-md shadow-sm sm:text-sm focus:ring-1 outline-none transition" style="background-color: var(--bg-input); border-color: var(--border-primary); color: var(--text-title);" placeholder="DD/MM/AAAA">
                         </div>
                     </div>
                     
-                    <div class="pt-6 flex items-center gap-4">
-                         <button type="submit" id="btn-gerar" class="w-full flex justify-center items-center gap-2 py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-offset-2" style="background-color: var(--accent-primary); color: var(--accent-text); --ring-color: var(--accent-primary); --ring-offset-color: var(--bg-form);">
+                    <div class="pt-6 flex flex-col gap-3">
+                         <button type="submit" id="btn-gerar" class="w-full py-2.5 px-4 rounded-lg shadow-sm text-sm font-bold transition transform active:scale-95" style="background-color: var(--accent-primary); color: var(--accent-text);">
                             Gerar Etiquetas
                         </button>
-                        <button type="button" id="btn-limpar" class="w-auto px-4 py-2 border rounded-lg text-sm font-semibold bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2" style="background-color: var(--bg-secondary); color: var(--text-muted); border-color: var(--border-primary); --ring-color: var(--accent-primary); --ring-offset-color: var(--bg-form);">
-                            Limpar
+                        <button type="button" id="btn-limpar" class="w-full py-2 px-4 border rounded-lg text-sm font-semibold transition bg-white hover:bg-gray-50 active:scale-95" style="background-color: var(--bg-secondary); color: var(--text-muted); border-color: var(--border-primary);">
+                            Limpar Tudo
                         </button>
                     </div>
                 </form>
+
+                <!-- Feedback do Gemini -->
+                <div id="dicas-container" class="mt-6 bg-white p-4 rounded-2xl shadow-sm border no-print hidden" style="background-color: var(--bg-form); border-color: var(--border-secondary);">
+                    <h3 class="flex items-center gap-2 font-bold text-sm mb-2" style="color: var(--text-title);">
+                        <svg class="h-4 w-4" style="color: var(--accent-primary);"><use href="#icon-sparkles"></use></svg>
+                        Insights Gemini
+                    </h3>
+                    <p id="dicas-content" class="text-xs leading-relaxed italic" style="color: var(--text-body);"></p>
+                </div>
             </div>
 
+            <!-- Área das Etiquetas (Crescimento Dinâmico) -->
             <div class="lg:col-span-2">
-                <div id="etiquetas-container-wrapper" class="bg-white p-6 rounded-2xl shadow-sm border min-h-[300px] flex flex-col" style="background-color: var(--bg-form); border-color: var(--border-secondary);">
+                <div id="etiquetas-container-wrapper" class="bg-white p-6 rounded-2xl shadow-sm border min-h-[250px] flex flex-col transition-all duration-500" style="background-color: var(--bg-form); border-color: var(--border-secondary);">
                      <div class="flex justify-between items-center gap-3 mb-6 no-print">
                         <div class="flex items-center gap-3">
                             <svg class="h-6 w-6" style="color: var(--text-muted);"><use href="#icon-tags"></use></svg>
                             <div>
-                                <h2 class="font-semibold" style="color: var(--text-title);">Etiquetas Geradas</h2>
-                                <p class="text-sm" style="color: var(--text-muted);">Pré-visualização para impressão</p>
+                                <h2 class="font-semibold text-lg" style="color: var(--text-title);">Pré-visualização</h2>
                             </div>
                         </div>
                     </div>
-                    <div id="etiquetas-container" class="flex-grow overflow-y-auto">
-                        <div id="placeholder" class="w-full h-full flex flex-col items-center justify-center text-gray-400">
-                            <svg id="placeholder-icon" class="h-24 w-24 text-gray-300" style="color: var(--border-primary);"><use href="#icon-cube-placeholder"></use></svg>
-                            <p class="mt-4 text-lg">Nenhuma etiqueta gerada ainda</p>
+                    
+                    <div id="etiquetas-container" class="flex-grow">
+                        <div id="placeholder" class="w-full h-full flex flex-col items-center justify-center text-gray-400 py-12">
+                            <svg id="placeholder-icon" class="h-20 w-20 opacity-30" style="color: var(--accent-primary);"><use href="#icon-cube-placeholder"></use></svg>
+                            <p class="mt-4 text-sm font-medium">Preencha o formulário para gerar etiquetas</p>
                         </div>
                     </div>
-                     <div id="print-button-container" class="w-full pt-6 text-center no-print"></div>
+
+                    <div id="print-button-container" class="w-full pt-6 text-center no-print"></div>
                 </div>
             </div>
         </main>
     </div>
 
     <script>
-        // --- SAFE LOCALSTORAGE WRAPPERS ---
+        // --- GESTÃO DE ERRO LOCALSTORAGE ---
         function getFromLocalStorage(key, defaultValue) {
-            try {
-                const value = localStorage.getItem(key);
-                return value ? value : defaultValue;
-            } catch (e) {
-                console.warn(`Could not read from localStorage: ${e.message}`);
-                return defaultValue;
-            }
+            try { return localStorage.getItem(key) || defaultValue; } catch (e) { return defaultValue; }
         }
-
         function setToLocalStorage(key, value) {
-            try {
-                localStorage.setItem(key, value);
-            } catch (e) {
-                console.warn(`Could not write to localStorage: ${e.message}`);
-            }
+            try { localStorage.setItem(key, value); } catch (e) {}
         }
 
-        // --- DOM ELEMENTS ---
+        // --- ELEMENTOS DO DOM ---
         const themeToggle = document.getElementById('theme-toggle');
         const sunIcon = document.getElementById('theme-icon-sun');
         const moonIcon = document.getElementById('theme-icon-moon');
@@ -242,9 +281,15 @@
         const form = document.getElementById('form-etiqueta');
         const etiquetasContainer = document.getElementById('etiquetas-container');
         const printButtonContainer = document.getElementById('print-button-container');
-        const btnLimpar = document.getElementById('btn-limpar');
+        const dicasContainer = document.getElementById('dicas-container');
+        const dicasContent = document.getElementById('dicas-content');
+        const dateInput = document.getElementById('form-date');
 
-        // --- THEME & LAYOUT LOGIC ---
+        // Data padrão (Hoje)
+        const today = new Date().toLocaleDateString('pt-BR');
+        dateInput.value = today;
+
+        // --- LÓGICA DE TEMA ---
         const applyTheme = (theme) => {
             document.body.classList.toggle('dark', theme === 'dark');
             sunIcon.classList.toggle('hidden', theme === 'dark');
@@ -253,10 +298,10 @@
 
         const applyPrintMode = (mode) => {
             document.body.classList.toggle('thermal-layout', mode === 'thermal');
-            btnA4.style.backgroundColor = mode === 'a4' ? 'var(--accent-primary)' : 'transparent';
-            btnA4.style.color = mode === 'a4' ? 'var(--accent-text)' : 'var(--text-muted)';
-            btnThermal.style.backgroundColor = mode === 'thermal' ? 'var(--accent-primary)' : 'transparent';
-            btnThermal.style.color = mode === 'thermal' ? 'var(--accent-text)' : 'var(--text-muted)';
+            const activeStyle = "background-color: var(--accent-primary); color: white; border-color: var(--accent-primary);";
+            const inactiveStyle = "background-color: transparent; color: var(--text-muted); border-color: transparent;";
+            btnA4.style = mode === 'a4' ? activeStyle : inactiveStyle;
+            btnThermal.style = mode === 'thermal' ? activeStyle : inactiveStyle;
         };
         
         let savedTheme = getFromLocalStorage('theme', 'light');
@@ -276,33 +321,68 @@
             savedPrintMode = mode;
             setToLocalStorage('printMode', mode);
             applyPrintMode(mode);
-            if (etiquetasContainer.querySelector('.etiqueta')) {
-                form.dispatchEvent(new Event('submit', { 'bubbles': true, 'cancelable': true }));
-            }
+            if (etiquetasContainer.querySelector('.etiqueta')) generateLabels();
         };
 
         btnA4.addEventListener('click', () => handlePrintModeChange('a4'));
         btnThermal.addEventListener('click', () => handlePrintModeChange('thermal'));
 
-        // --- LABEL GENERATION LOGIC ---
-        const generateLabels = () => {
-            etiquetasContainer.innerHTML = '';
-            printButtonContainer.innerHTML = '';
+        // --- INTEGRAÇÃO API GEMINI ---
+        async function fetchGeminiInsights(cidade) {
+            const apiKey = ""; // Chave fornecida pelo ambiente
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
             
+            dicasContainer.classList.remove('hidden');
+            dicasContent.textContent = "A IA está a analisar o destino...";
+
+            const prompt = `És um especialista em logística. Dá uma dica curta (máximo 15 palavras) sobre o envio de encomendas para a cidade de ${cidade}, no Brasil. Pode ser sobre prazos, embalagem ou transportadoras regionais.`;
+
+            const makeRequest = async (retries = 3) => {
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                    });
+                    if (!response.ok) throw new Error();
+                    const data = await response.json();
+                    return data.candidates?.[0]?.content?.parts?.[0]?.text;
+                } catch (e) {
+                    if (retries > 0) {
+                        await new Promise(r => setTimeout(r, 2000));
+                        return makeRequest(retries - 1);
+                    }
+                    return "Não foi possível carregar insights logísticos agora.";
+                }
+            };
+
+            const result = await makeRequest();
+            dicasContent.textContent = result;
+        }
+
+        // --- GERAÇÃO DE ETIQUETAS ---
+        const generateLabels = () => {
             const destinatario = document.getElementById('destinatario').value;
             const pedido = document.getElementById('pedido').value;
             const cidade = document.getElementById('cidade').value;
             const volumes = parseInt(document.getElementById('volumes').value, 10);
+            const labelDate = dateInput.value;
 
             if (!destinatario || !pedido || !cidade || isNaN(volumes) || volumes < 1) {
-                etiquetasContainer.innerHTML = '<div class="w-full h-full flex flex-col items-center justify-center text-red-500"><p>Por favor, preencha todos os campos corretamente.</p></div>';
+                // Em vez de alert(), usamos uma mensagem no container
+                etiquetasContainer.innerHTML = '<div class="text-red-500 text-center py-10 font-bold">Preencha todos os campos corretamente!</div>';
                 return;
             }
+
+            etiquetasContainer.innerHTML = '';
+            printButtonContainer.innerHTML = '';
             
             const ETIQUETAS_POR_PAGINA = savedPrintMode === 'a4' ? 6 : 1;
             
             for (let i = 1; i <= volumes; i++) {
-                let currentPageContainer = etiquetasContainer.querySelector(`.page-container-screen:nth-child(${Math.ceil(i / ETIQUETAS_POR_PAGINA)})`);
+                let pageIndex = Math.ceil(i / ETIQUETAS_POR_PAGINA);
+                let currentPageContainer = etiquetasContainer.querySelector(`.page-container-screen:nth-child(${pageIndex})`);
+                
                 if (!currentPageContainer) {
                     currentPageContainer = document.createElement('div');
                     currentPageContainer.classList.add('page-container-screen', 'page-container-print');
@@ -310,10 +390,13 @@
                 }
 
                 const etiquetaHTML = `
-                    <div class="etiqueta bg-white rounded-lg p-3 flex flex-col">
+                    <div class="etiqueta p-3 flex flex-col">
+                        <!-- Data Editável Individualmente -->
+                        <input type="text" class="data-stamp" value="${labelDate}" title="Edite a data se necessário">
+                        
                         <div style="position: relative; z-index: 1; display: flex; flex-direction: column; height: 100%;">
                             <div class="flex justify-between items-start mb-2">
-                                <h3 class="text-xl font-bold w-3/4 leading-tight text-black">${destinatario}</h3>
+                                <h3 class="text-xl font-bold w-3/4 leading-tight text-black uppercase">${destinatario}</h3>
                                 <div class="volume-box bg-black text-white text-center p-1 px-3 rounded-md">
                                     <span class="font-bold text-xl">${i}/${volumes}</span>
                                 </div>
@@ -322,8 +405,8 @@
                                 <p class="text-base text-black"><span class="font-bold text-gray-600">Pedido:</span> ${pedido}</p>
                                 <p class="text-base text-black"><span class="font-bold text-gray-600">Destino:</span> ${cidade}</p>
                             </div>
-                            <div class="border-t-2 border-dashed border-gray-300 pt-1 text-center">
-                                <p class="font-semibold text-sm text-black">Volume ${i} de ${volumes}</p>
+                            <div class="border-t-2 border-dashed border-gray-300 pt-1 text-center mt-3">
+                                <p class="font-semibold text-xs text-black">VOLUME ${i} DE ${volumes}</p>
                             </div>
                         </div>
                     </div>
@@ -331,40 +414,40 @@
                 currentPageContainer.insertAdjacentHTML('beforeend', etiquetaHTML);
             }
             
-            const printButtonHTML = `
-                <button onclick="window.print()" class="px-6 py-2 text-white font-semibold rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2" style="background-color: var(--accent-primary); color: var(--accent-text); --ring-color: var(--accent-primary); --ring-offset-color: var(--bg-form);">
-                    Imprimir Etiquetas
-                </button>
-            `;
-            printButtonContainer.innerHTML = printButtonHTML;
+            const printBtn = document.createElement('button');
+            printBtn.className = "px-10 py-3 text-white font-bold rounded-xl shadow-lg transition transform hover:scale-105 active:scale-95";
+            printBtn.style.backgroundColor = "var(--accent-primary)";
+            printBtn.innerHTML = "Imprimir Agora";
+            printBtn.onclick = () => window.print();
+            printButtonContainer.appendChild(printBtn);
+
+            // Insights da IA
+            fetchGeminiInsights(cidade);
         };
 
-        form.addEventListener('submit', (event) => {
-            event.preventDefault();
+        // --- LISTENERS DE EVENTO ---
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
             generateLabels();
         });
         
-        btnLimpar.addEventListener('click', () => {
+        document.getElementById('btn-limpar').addEventListener('click', () => {
             form.reset();
+            dateInput.value = today;
             printButtonContainer.innerHTML = '';
-            etiquetasContainer.innerHTML = `<div id="placeholder" class="w-full h-full flex flex-col items-center justify-center text-gray-400">
-                            <svg id="placeholder-icon" class="h-24 w-24 text-gray-300" style="color: var(--border-primary);"><use href="#icon-cube-placeholder"></use></svg>
-                            <p class="mt-4 text-lg">Nenhuma etiqueta gerada ainda</p>
-                        </div>`;
+            dicasContainer.classList.add('hidden');
+            etiquetasContainer.innerHTML = `
+                <div id="placeholder" class="w-full h-full flex flex-col items-center justify-center text-gray-400 py-12">
+                    <svg id="placeholder-icon" class="h-20 w-20 opacity-30" style="color: var(--accent-primary);"><use href="#icon-cube-placeholder"></use></svg>
+                    <p class="mt-4 text-sm font-medium">Preencha o formulário para gerar etiquetas</p>
+                </div>`;
         });
 
-        // --- FORM FOCUS LOGIC ---
-        const formFieldGroups = document.querySelectorAll('.form-field-group');
-        formFieldGroups.forEach(group => {
-            const input = group.querySelector('input');
-            input.addEventListener('focus', () => {
-                group.classList.add('is-focused');
-            });
-            input.addEventListener('blur', () => {
-                group.classList.remove('is-focused');
-            });
+        // Lógica de foco para ressalte visual
+        document.querySelectorAll('.form-field-group input').forEach(input => {
+            input.addEventListener('focus', () => input.parentElement.classList.add('is-focused'));
+            input.addEventListener('blur', () => input.parentElement.classList.remove('is-focused'));
         });
-
     </script>
 </body>
 </html>
