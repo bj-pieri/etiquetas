@@ -6,6 +6,7 @@
     <title>Gerador de Etiquetas de Despacho</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Mantemos Inter para a UI, mas a etiqueta usará fonte de sistema -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -28,6 +29,7 @@
         }
 
         * { box-sizing: border-box; }
+        /* Fonte Inter para a UI geral */
         body { font-family: 'Inter', sans-serif; background-color: var(--bg-primary); color: var(--text-body); transition: background-color 0.3s, color 0.3s; }
         
         /* Layout de Pré-visualização no ecrã */
@@ -42,6 +44,13 @@
             border: 1px solid var(--border-secondary);
             background-color: white;
             overflow: hidden;
+            /* FONTE SAN FRANCISCO (APPLE SYSTEM) 
+               -apple-system e BlinkMacSystemFont forçam o uso da SF em Macs e iOS.
+               Em Windows, cairá para Segoe UI ou Arial, mantendo boa legibilidade.
+            */
+            font-family: -apple-system, BlinkMacSystemFont, "San Francisco", "Helvetica Neue", Helvetica, "Segoe UI", Arial, sans-serif;
+            /* Adicionado letter-spacing leve para imitar o tracking da SF em textos pequenos */
+            letter-spacing: -0.01em; 
         }
         .etiqueta:hover { transform: scale(1.03); box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1); }
         
@@ -79,6 +88,8 @@
             width: 100px;
             outline: none;
             font-weight: 500;
+            /* Mesma pilha de fontes para a data */
+            font-family: -apple-system, BlinkMacSystemFont, "San Francisco", "Helvetica Neue", Helvetica, "Segoe UI", Arial, sans-serif;
         }
         .data-stamp:hover, .data-stamp:focus {
             color: var(--accent-primary);
@@ -366,7 +377,7 @@
                         
                         <div style="position: relative; z-index: 1; display: flex; flex-direction: column; height: 100%;">
                             <div class="flex justify-between items-start mb-2">
-                                <h3 class="text-xl font-bold w-3/4 leading-tight text-black uppercase">${destinatario}</h3>
+                                <h3 class="text-xl font-bold w-3/4 leading-tight text-black">${destinatario}</h3>
                                 <div class="volume-box bg-black text-white text-center p-1 px-3 rounded-md">
                                     <span class="font-bold text-xl">${i}/${volumes}</span>
                                 </div>
