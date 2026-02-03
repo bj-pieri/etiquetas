@@ -691,8 +691,7 @@
                 showToast("Gere as etiquetas antes de imprimir!", "error");
                 return;
             }
-            showToast("Preparando documento para impressão...");
-            setTimeout(() => window.print(), 800);
+            window.print();
         });
 
         // GLOBAL HOTKEYS
