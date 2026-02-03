@@ -353,15 +353,9 @@
                     </div>
 
                     <div class="pt-4 space-y-3">
-                        <button type="submit" 
-                            class="w-full bg-zinc-900 hover:bg-zinc-800 dark:bg-white dark:hover:bg-zinc-200 text-white dark:text-zinc-900 font-semibold py-3.5 px-6 rounded-xl shadow-lg active:scale-[0.98] transition-all flex items-center justify-center gap-2 group disabled:opacity-75 disabled:cursor-not-allowed">
-                            <span class="tracking-wide">Gerar Etiquetas</span>
-                            <svg class="w-4 h-4 opacity-70 group-hover:translate-x-0.5 transition-transform"><use href="#icon-refresh"></use></svg>
-                        </button>
-                        
                         <button type="button" id="btn-limpar"
-                            class="w-full py-2.5 text-xs font-medium text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200 transition-colors border border-transparent hover:border-zinc-200 dark:hover:border-zinc-800 rounded-lg">
-                            Limpar Campos
+                            class="w-full py-3.5 bg-zinc-100 hover:bg-zinc-200 text-zinc-600 font-medium rounded-xl transition-colors dark:bg-zinc-800 dark:hover:bg-zinc-700 dark:text-zinc-300">
+                            Limpar Campos e Reiniciar
                         </button>
                     </div>
                 </form>
@@ -486,7 +480,12 @@
             setBtn(els.btnA4, mode === 'a4');
             setBtn(els.btnThermal, mode === 'thermal');
 
-            if (els.container.querySelector('.etiqueta')) generateLabels();
+            if (els.container.querySelector('.etiqueta')) {
+                // If placeholder is not visible, refresh visual
+                if (!document.getElementById('placeholder')) {
+                     generateLabels(false);
+                }
+            }
         };
 
         els.btnA4.addEventListener('click', () => updatePrintModeUI('a4'));
@@ -516,98 +515,150 @@
             }, 3000);
         };
 
-        // --- LABEL GENERATOR ENGINE ---
-        // Agora aceita incrementCounter (default true para clicks no botão)
-        const generateLabels = (incrementCounter = true) => {
-            const data = {
-                dest: els.inputs.dest.value,
-                ped: els.inputs.ped.value,
-                cid: els.inputs.cid.value,
-                vol: parseInt(els.inputs.vol.value, 10),
-                dateRaw: els.dateInput.value
-            };
+        // --- JIT Engine & State ---
+        // Keeps track of rendered volume to avoid re-rendering structure when only text changes
+        let renderedVol = 0;
 
-            if (!data.dest || !data.ped || !data.cid || isNaN(data.vol) || data.vol < 1) return;
-
-            let displayDate = data.dateRaw;
-            if (data.dateRaw && data.dateRaw.includes('-')) {
-                const [y, m, d] = data.dateRaw.split('-');
-                displayDate = `${d}/${m}/${y}`;
-            }
-
+        const renderStructure = (vol) => {
+            // Re-builds the container pages and labels
             els.container.innerHTML = '';
             els.container.classList.remove('opacity-0');
             
             const LABELS_PER_PAGE = currentMode === 'a4' ? 10 : 1;
 
-            for (let i = 1; i <= data.vol; i++) {
+            for (let i = 1; i <= vol; i++) {
                 let pageIndex = Math.ceil(i / LABELS_PER_PAGE);
                 let page = els.container.querySelector(`.page-container-screen:nth-child(${pageIndex})`);
                 
                 if (!page) {
                     page = document.createElement('div');
+                    // Add animate-in class only here to animate newly created structure
+                    // Modified: added dark:bg-transparent dark:shadow-none to remove white paper look in dark mode
                     page.className = 'page-container-screen page-container-print bg-white dark:bg-transparent dark:shadow-none shadow-sm animate-in fade-in zoom-in-95 duration-500'; 
                     if(currentMode === 'thermal') page.className = 'page-container-screen page-container-print';
                     els.container.appendChild(page);
                 }
 
                 const html = `
-                    <div class="etiqueta p-3 flex flex-col h-full border border-slate-200 bg-white">
-                        <input type="text" class="data-stamp" value="${displayDate}" tabindex="-1" title="Edite a data se necessário">
+                    <div class="etiqueta p-3 flex flex-col h-full border border-slate-200 bg-white" id="label-${i}">
+                        <input type="text" class="data-stamp" data-field="date" tabindex="-1" title="Edite a data se necessário">
                         
                         <div class="relative z-10 flex flex-col h-full">
                             <div class="flex justify-between items-start mb-2">
-                                <h3 class="text-xl font-bold w-3/4 leading-tight text-black">${data.dest}</h3>
+                                <h3 class="text-xl font-bold w-3/4 leading-tight text-black" data-field="dest"></h3>
                                 <div class="volume-box bg-black text-white text-center p-1 px-3 rounded-md">
-                                    <span class="font-bold text-xl">${i}/${data.vol}</span>
+                                    <span class="font-bold text-xl" data-field="vol_count"></span>
                                 </div>
                             </div>
                             
                             <div class="flex-grow space-y-1 mt-1">
-                                <p class="text-base text-black"><span class="font-bold text-slate-600">Pedido:</span> ${data.ped}</p>
-                                <p class="text-base text-black"><span class="font-bold text-slate-600">Destino:</span> ${data.cid}</p>
+                                <p class="text-base text-black"><span class="font-bold text-slate-600">Pedido:</span> <span data-field="ped"></span></p>
+                                <p class="text-base text-black"><span class="font-bold text-slate-600">Destino:</span> <span data-field="cid"></span></p>
                             </div>
                             
                             <div class="border-t-2 border-dashed border-slate-300 pt-1 text-center mt-3">
-                                <p class="font-bold text-xs text-black uppercase tracking-wide">VOLUME ${i} DE ${data.vol}</p>
+                                <p class="font-bold text-xs text-black uppercase tracking-wide" data-field="footer"></p>
                             </div>
                         </div>
                     </div>
                 `;
                 page.insertAdjacentHTML('beforeend', html);
             }
-            // Only show success toast on manual trigger
-            if (incrementCounter) showToast(`Geradas ${data.vol} etiquetas com sucesso!`);
+            renderedVol = vol;
         };
 
-        // --- Listeners & Hotkeys ---
-        
-        let isSubmitting = false; // Flag para debounce
+        const updateContent = (data) => {
+            // Efficiently updates text without touching DOM structure
+            let displayDate = data.dateRaw;
+            if (data.dateRaw && data.dateRaw.includes('-')) {
+                const [y, m, d] = data.dateRaw.split('-');
+                displayDate = `${d}/${m}/${y}`;
+            }
 
+            // Fallbacks for empty state preview
+            const destText = data.dest || "NOME DO CLIENTE";
+            const pedText = data.ped || "---";
+            const cidText = data.cid || "---";
+
+            const labels = els.container.querySelectorAll('.etiqueta');
+            labels.forEach((label, index) => {
+                const i = index + 1;
+                label.querySelector('[data-field="date"]').value = displayDate;
+                label.querySelector('[data-field="dest"]').textContent = destText;
+                label.querySelector('[data-field="vol_count"]').textContent = `${i}/${data.vol}`;
+                label.querySelector('[data-field="ped"]').textContent = pedText;
+                label.querySelector('[data-field="cid"]').textContent = cidText;
+                label.querySelector('[data-field="footer"]').textContent = `VOLUME ${i} DE ${data.vol}`;
+            });
+        };
+
+        // Main JIT Controller
+        const updatePreview = () => {
+            const volStr = els.inputs.vol.value;
+            // Basic validation for preview: allow typing but require at least 1 volume
+            const vol = (volStr && !isNaN(volStr) && parseInt(volStr) > 0) ? parseInt(volStr) : 1;
+            
+            const data = {
+                dest: els.inputs.dest.value,
+                ped: els.inputs.ped.value,
+                cid: els.inputs.cid.value,
+                vol: vol,
+                dateRaw: els.dateInput.value
+            };
+
+            // If user hasn't typed anything meaningful yet, check if we have any data to show.
+            if (document.getElementById('placeholder')) {
+                const hasData = data.dest || data.ped || data.cid;
+                if (!hasData) return; // Keep placeholder until some data exists
+            }
+
+            // Structure Update (if volume changed)
+            if (vol !== renderedVol || document.getElementById('placeholder')) {
+                renderStructure(vol);
+            }
+
+            // Content Update (Always)
+            updateContent(data);
+        };
+
+        // Used for the button manual trigger (just toast and maybe full re-render)
+        const generateLabels = (incrementCounter = true) => {
+             updatePreview();
+             if (incrementCounter) showToast(`Etiquetas atualizadas!`);
+        };
+
+        // --- Setup Listeners ---
+        const debounce = (fn, delay) => {
+            let timeoutId;
+            return (...args) => {
+                clearTimeout(timeoutId);
+                timeoutId = setTimeout(() => fn(...args), delay);
+            };
+        };
+
+        // Attach input listeners for JIT
+        const jitHandler = debounce(updatePreview, 50); // Fast debounce for responsiveness
+        
+        Object.values(els.inputs).forEach(input => {
+            input.addEventListener('input', jitHandler);
+        });
+        els.dateInput.addEventListener('change', jitHandler); // Date input might use change
+
+        // Keep form submit for manual trigger/validation check
+        let isSubmitting = false;
         els.form.addEventListener('submit', (e) => {
             e.preventDefault();
-            
-            // Prevent Spam / Double Click
             if (isSubmitting) return;
-            isSubmitting = true;
-
-            // Visual disable of button
-            const submitBtn = els.form.querySelector('button[type="submit"]');
-            submitBtn.disabled = true;
             
-            generateLabels(true); // true = increment counter
-
-            // Cooldown of 1 second
-            setTimeout(() => {
-                isSubmitting = false;
-                submitBtn.disabled = false;
-            }, 1000);
+            // Just manual refresh visual feedback
+            generateLabels(true); 
         });
 
         // Clear
         els.btnLimpar.addEventListener('click', () => {
             els.form.reset();
             initDate();
+            renderedVol = 0; // Reset state
             els.container.innerHTML = `
                 <div id="placeholder" class="flex flex-col items-center justify-center h-[40vh] text-zinc-400 select-none animate-in fade-in duration-700">
                     <div class="relative mb-6 group cursor-pointer">
@@ -649,7 +700,7 @@
             if (e.key === 'Escape') els.btnLimpar.click();
             if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
                 e.preventDefault();
-                if (!isSubmitting) els.form.querySelector('button[type="submit"]').click();
+                if (!isSubmitting) generateLabels(true);
             }
             if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
                 e.preventDefault();
