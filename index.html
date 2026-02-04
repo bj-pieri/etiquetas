@@ -11,7 +11,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
-            darkMode: 'class',
+            darkMode: 'class', // Mantemos class, mas gerenciaremos manualmente as classes .dark e .gruvbox
             theme: {
                 extend: {
                     fontFamily: {
@@ -20,33 +20,21 @@
                         label: ['-apple-system', 'BlinkMacSystemFont', '"San Francisco"', '"Helvetica Neue"', 'Arial', 'sans-serif'],
                     },
                     colors: {
-                        // Mantendo Zinc para a Sidebar/UI
-                        zinc: {
-                            850: '#202022',
-                            900: '#18181b',
-                            950: '#09090b',
-                        },
-                        brand: {
-                            500: '#6366f1', // Indigo Vibrant
-                            600: '#4f46e5',
-                            950: '#312e81',
-                        },
-                        // Adicionando Slate para compatibilidade com o layout da etiqueta
-                        slate: {
-                            50: '#f8fafc',
-                            100: '#f1f5f9',
-                            200: '#e2e8f0',
-                            300: '#cbd5e1',
-                            400: '#94a3b8',
-                            500: '#64748b',
-                            600: '#475569',
-                            700: '#334155',
-                            850: '#1e293b',
-                            900: '#0f172a',
+                        // Cores Semânticas baseadas em CSS Variables
+                        skin: {
+                            base: 'var(--color-bg-base)',       // Fundo da área de preview (canvas)
+                            sidebar: 'var(--color-bg-sidebar)', // Fundo da barra lateral
+                            input: 'var(--color-bg-input)',     // Fundo dos inputs
+                            border: 'var(--color-border)',      // Bordas gerais
+                            text: 'var(--color-text-main)',     // Texto principal
+                            muted: 'var(--color-text-muted)',   // Texto secundário
+                            accent: 'var(--color-accent)',      // Cor de destaque (Brand)
+                            'accent-hover': 'var(--color-accent-hover)',
+                            dot: 'var(--color-dot)',            // Cor dos pontos do grid
                         }
                     },
                     boxShadow: {
-                        'glow': '0 0 20px -5px rgba(99, 102, 241, 0.4)',
+                        'glow': '0 0 20px -5px var(--color-accent)', // Glow adaptativo
                         'card': '0 2px 8px -2px rgba(0,0,0,0.05), 0 0 1px rgba(0,0,0,0.1)',
                     },
                     animation: {
@@ -65,29 +53,64 @@
         }
     </script>
     <style>
+        /* --- DEFINIÇÃO DE TEMAS (CSS VARIABLES) --- */
+        :root {
+            /* Light Theme (Padrão) - Zinc & Indigo */
+            --color-bg-base: #f8fafc;       /* Zinc 50 */
+            --color-bg-sidebar: #ffffff;    /* White */
+            --color-bg-input: #f4f4f5;      /* Zinc 100 */
+            --color-border: #e4e4e7;        /* Zinc 200 */
+            --color-text-main: #18181b;     /* Zinc 900 */
+            --color-text-muted: #71717a;    /* Zinc 500 */
+            --color-accent: #6366f1;        /* Indigo 500 */
+            --color-accent-hover: #4f46e5;  /* Indigo 600 */
+            --color-dot: #cbd5e1;           /* Slate 300 */
+        }
+
+        .dark {
+            /* Dark Theme - Zinc & Indigo */
+            --color-bg-base: #18181b;       /* Zinc 900 */
+            --color-bg-sidebar: #09090b;    /* Zinc 950 */
+            --color-bg-input: #27272a;      /* Zinc 800 */
+            --color-border: #27272a;        /* Zinc 800 */
+            --color-text-main: #f4f4f5;     /* Zinc 100 */
+            --color-text-muted: #a1a1aa;    /* Zinc 400 */
+            --color-accent: #6366f1;        /* Indigo 500 */
+            --color-accent-hover: #818cf8;  /* Indigo 400 */
+            --color-dot: #3f3f46;           /* Zinc 700 */
+        }
+
+        .gruvbox {
+            /* Gruvbox Theme - Retro Warm Dark */
+            --color-bg-base: #1d2021;       /* Hard Dark */
+            --color-bg-sidebar: #282828;    /* Dark 1 */
+            --color-bg-input: #3c3836;      /* Dark 2 */
+            --color-border: #504945;        /* Dark 3 */
+            --color-text-main: #ebdbb2;     /* Light 1 */
+            --color-text-muted: #a89984;    /* Gray */
+            --color-accent: #d65d0e;        /* Orange */
+            --color-accent-hover: #fe8019;  /* Bright Orange */
+            --color-dot: #504945;           /* Dark 3 for dots */
+        }
+
         /* --- Reset e Base --- */
         * { box-sizing: border-box; }
-        body { overflow: hidden; } /* Impede scroll na página inteira (app feel) */
+        body { overflow: hidden; } 
 
-        /* --- Padrão de Fundo do Canvas (Grid) - Restaurado do código fornecido --- */
+        /* --- Padrão de Fundo (Grid) usando Variáveis --- */
         .bg-grid-pattern {
-            background-color: #f8fafc;
-            background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+            background-color: var(--color-bg-base);
+            background-image: radial-gradient(var(--color-dot) 1px, transparent 1px);
             background-size: 20px 20px;
         }
-        .dark .bg-grid-pattern {
-            background-color: #18181b; /* Alterado para Zinc 900 para combinar com o formulário */
-            background-image: radial-gradient(#334155 1px, transparent 1px);
-        }
 
-        /* --- Scrollbar Customizada (Fina e Discreta) --- */
+        /* --- Scrollbar --- */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
-        .dark ::-webkit-scrollbar-thumb { background: #475569; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        ::-webkit-scrollbar-thumb { background: var(--color-dot); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--color-text-muted); }
 
-        /* --- Estilos da Etiqueta (Visualização) - Restaurado do código fornecido --- */
+        /* --- Estilos da Etiqueta (Visualização) --- */
         .etiqueta {
             position: relative;
             background-color: white;
@@ -96,26 +119,24 @@
             overflow: hidden;
             font-family: -apple-system, BlinkMacSystemFont, "San Francisco", "Helvetica Neue", Helvetica, "Segoe UI", Arial, sans-serif;
             letter-spacing: -0.01em;
-            /* Arredondamento leve para melhor contraste na tela */
             border-radius: 8px;
         }
 
-        /* Animação de Hover solicitada */
         .etiqueta:hover {
             transform: translateY(-4px);
             box-shadow: 0 12px 20px -5px rgba(0, 0, 0, 0.1), 0 8px 8px -6px rgba(0, 0, 0, 0.05);
             z-index: 10;
         }
         
-        /* Efeito de Logótipo de fundo */
         .etiqueta::before { 
             content: ''; position: absolute; inset: 5px;
             background-image: url('https://belportas.com.br/wp-content/uploads/2022/05/perfil-linktree.png'); 
             background-position: center; background-repeat: no-repeat; background-size: contain; 
             opacity: 0.08; z-index: 0; pointer-events: none;
+            -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;
         }
+        @media print { .etiqueta::before { opacity: 0.15 !important; } }
 
-        /* Input Data na Etiqueta (Invisível mas editável) */
         .data-stamp {
             position: absolute; bottom: 8px; left: 12px;
             font-size: 12px; font-weight: 700; color: #000;
@@ -125,128 +146,52 @@
         }
         .data-stamp:hover { background-color: rgba(99, 102, 241, 0.1); border-radius: 2px; }
 
-        /* --- Layout Responsivo das Etiquetas --- */
-        /* Modo Tela: A4 */
+        /* --- Layout Tela --- */
         body:not(.thermal-layout) .page-container-screen {
-            display: grid;
-            grid-template-columns: repeat(2, 8.5cm); /* 2 Colunas */
-            gap: 1rem;
-            padding: 1rem;
-            justify-content: center;
+            display: grid; grid-template-columns: repeat(2, 8.5cm); gap: 1rem; padding: 1rem; justify-content: center;
         }
         body:not(.thermal-layout) .etiqueta { width: 8.5cm; height: 4.5cm; }
 
-        /* Modo Tela: Térmica */
         body.thermal-layout .page-container-screen {
             display: flex; flex-direction: column; align-items: center; gap: 1rem; padding: 1rem;
         }
         body.thermal-layout .etiqueta { width: 80mm; min-height: 45mm; height: auto; }
 
-        /* --- ESTILOS DE IMPRESSÃO (CRITICO) - Restaurado fielmente do código fornecido --- */
+        /* --- IMPRESSÃO --- */
         @media print {
-            /* Zera margens do navegador para controle total */
             @page { margin: 0.5cm; size: auto; }
-
-            /* Reset Global de Layout para Impressão */
-            html, body { 
-                height: auto !important; 
-                overflow: visible !important; 
-                background: white !important; 
-                width: 100% !important;
-                margin: 0 !important;
-                padding: 0 !important;
-            }
-
+            html, body { height: auto !important; overflow: visible !important; background: white !important; width: 100% !important; margin: 0 !important; padding: 0 !important; }
             .no-print { display: none !important; }
-
-            /* Desmonta o layout flexível do App */
-            #app-wrapper {
-                display: block !important;
-                height: auto !important;
-                overflow: visible !important;
-                width: 100% !important;
-            }
-
-            #main-content { 
-                margin: 0 !important; 
-                padding: 0 !important; 
-                height: auto !important; 
-                overflow: visible !important; 
-                display: block !important; 
-                position: static !important;
-                width: 100% !important;
-            }
-
-            #preview-area { 
-                background: none !important; 
-                padding: 0 !important; 
-                margin: 0 !important;
-                overflow: visible !important; 
-                display: block !important; 
-                height: auto !important;
-                width: 100% !important;
-            }
-
-            #etiquetas-container {
-                display: block !important;
-                width: 100% !important;
-            }
+            #app-wrapper, #main-content, #preview-area, #etiquetas-container { display: block !important; height: auto !important; overflow: visible !important; width: 100% !important; margin: 0 !important; padding: 0 !important; position: static !important; }
+            #preview-area { background: none !important; }
             
             .etiqueta {
                 box-shadow: none !important;
                 border: 2px solid #000 !important;
-                page-break-inside: avoid;
-                break-inside: avoid;
-                /* Mantém o arredondamento na impressão conforme solicitado */
+                page-break-inside: avoid; break-inside: avoid;
                 border-radius: 8px !important;
                 transform: none !important;
             }
-            
-            /* Correção para o Logo aparecer na impressão */
-            .etiqueta::before {
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
-                opacity: 0.15 !important; /* Leve aumento de opacidade para impressão */
-            }
-
             .data-stamp { opacity: 1 !important; border: none !important; background: none !important; }
             .volume-box { background-color: #000 !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
 
-            /* Grid A4 Impressão: 10 por página (2 colunas x 5 linhas) */
             body:not(.thermal-layout) .page-container-print {
-                display: grid;
-                grid-template-columns: repeat(2, 8.5cm);
-                gap: 0.3cm;
-                /* Centraliza na folha A4 */
-                margin: 0 auto; 
-                page-break-after: always;
-                break-after: page;
-                width: fit-content;
-                /* Garante que não haja overflow lateral */
-                max-width: 100%;
+                display: grid; grid-template-columns: repeat(2, 8.5cm); gap: 0.3cm; margin: 0 auto; page-break-after: always; break-after: page; width: fit-content; max-width: 100%;
             }
-            
-            /* Remove a quebra forçada da última página */
-            body:not(.thermal-layout) .page-container-print:last-child {
-                page-break-after: auto;
-                break-after: auto;
-            }
-
+            body:not(.thermal-layout) .page-container-print:last-child { page-break-after: auto; break-after: auto; }
             body:not(.thermal-layout) .etiqueta { width: 8.5cm !important; height: 4.5cm !important; }
 
-            /* Impressão Térmica */
             body.thermal-layout .page-container-print { display: block; margin: 0; }
-            body.thermal-layout .etiqueta {
-                width: 78mm !important; margin: 0; padding: 4mm; border: none !important; page-break-after: always;
-            }
+            body.thermal-layout .etiqueta { width: 78mm !important; margin: 0; padding: 4mm; border: none !important; page-break-after: always; }
         }
     </style>
 </head>
-<!-- Aumentado duration para 1000ms para o fade geral do tema -->
-<body class="bg-zinc-50 dark:bg-zinc-950 text-zinc-800 dark:text-zinc-200 transition-colors duration-1000">
+<!-- Aplicando variáveis de cor na raiz e transição lenta -->
+<body class="bg-skin-base text-skin-text transition-colors duration-1000">
 
-    <!-- Ícones SVG (Lucide Style) -->
+    <!-- Ícones SVG -->
     <svg class="hidden">
+        <!-- Ícones funcionais -->
         <symbol id="icon-box" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></symbol>
         <symbol id="icon-user" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></symbol>
         <symbol id="icon-map" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></symbol>
@@ -254,34 +199,32 @@
         <symbol id="icon-calendar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></symbol>
         <symbol id="icon-printer" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></symbol>
         <symbol id="icon-refresh" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M3 21v-5h5"/></symbol>
+        
+        <!-- Ícones de Tema -->
         <symbol id="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></symbol>
         <symbol id="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></symbol>
+        <symbol id="icon-cube" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></symbol>
     </svg>
 
-    <!-- Layout Principal: Flex Row (Sidebar Fixa + Main Flexível) -->
-    <!-- Adicionado ID "app-wrapper" para controle de impressão -->
     <div id="app-wrapper" class="flex h-screen w-full overflow-hidden">
         
-        <!-- SIDEBAR: Painel de Controle (Mantido moderno) -->
-        <!-- Aumentado duration para 1000ms para suavizar a troca do fundo -->
-        <aside class="w-full md:w-[380px] flex flex-col bg-white dark:bg-zinc-900 border-r border-zinc-200 dark:border-zinc-800 z-30 shadow-2xl shadow-zinc-200/50 dark:shadow-none flex-shrink-0 transition-colors duration-1000 no-print">
+        <!-- SIDEBAR -->
+        <aside class="w-full md:w-[380px] flex flex-col bg-skin-sidebar border-r border-skin-border z-30 shadow-2xl shadow-zinc-200/50 dark:shadow-none flex-shrink-0 transition-colors duration-1000 no-print">
             
             <!-- Branding -->
-            <div class="p-6 border-b border-zinc-100 dark:border-zinc-800/50 relative">
-                <!-- Theme Toggle com Ícones e Animação Lenta -->
-                <button id="theme-toggle" class="absolute right-4 top-4 p-2 rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-500 dark:text-zinc-400 transition-colors overflow-hidden group" title="Alternar Tema">
-                    <div class="relative w-5 h-5">
-                        <!-- Ajustado duration-1000 e curva ease-in-out para efeito celestial -->
-                        <svg class="w-5 h-5 absolute inset-0 transform transition-all duration-1000 ease-in-out rotate-0 dark:-rotate-90 scale-100 dark:scale-0 opacity-100 dark:opacity-0 text-amber-500"><use href="#icon-sun"></use></svg>
-                        <svg class="w-5 h-5 absolute inset-0 transform transition-all duration-1000 ease-in-out rotate-90 dark:rotate-0 scale-0 dark:scale-100 opacity-0 dark:opacity-100 text-indigo-400"><use href="#icon-moon"></use></svg>
+            <div class="p-6 border-b border-skin-border relative">
+                <!-- Theme Toggle com 3 Estados -->
+                <button id="theme-toggle" class="absolute right-4 top-4 p-2 rounded-full hover:bg-skin-input text-skin-muted transition-colors overflow-hidden group" title="Alternar Tema (Claro / Escuro / Gruvbox)">
+                    <div class="relative w-5 h-5" id="theme-icon-container">
+                        <!-- Ícones injetados via JS para controle preciso da rotação de 3 estados -->
+                        <svg class="w-5 h-5 text-skin-accent"><use href="#icon-sun"></use></svg>
                     </div>
                 </button>
                 
                 <div class="text-center pt-2">
-                    <h1 class="text-xl font-bold text-zinc-900 dark:text-white tracking-tight font-sans leading-tight">
+                    <h1 class="text-xl font-bold text-skin-text tracking-tight font-sans leading-tight">
                         Gerador de Etiquetas<br>
-                        <!-- Removido gradiente e cor de destaque diferente -->
-                        <span class="text-zinc-900 dark:text-white font-extrabold">Bel Portas</span>
+                        <span class="text-skin-text font-extrabold">Bel Portas</span>
                     </h1>
                 </div>
             </div>
@@ -291,124 +234,116 @@
                 <form id="form-etiqueta" class="space-y-5">
                     
                     <div class="space-y-1.5">
-                        <label class="text-[11px] uppercase tracking-wider font-bold text-zinc-500 dark:text-zinc-400 pl-1">Destinatário</label>
+                        <label class="text-[11px] uppercase tracking-wider font-bold text-skin-muted pl-1">Destinatário</label>
                         <div class="relative group">
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <svg class="h-4 w-4 text-zinc-400 group-focus-within:text-brand-500 transition-all duration-300 group-focus-within:scale-110 group-focus-within:-translate-y-0.5"><use href="#icon-user"></use></svg>
+                                <svg class="h-4 w-4 text-skin-muted group-focus-within:text-skin-accent transition-all duration-300 group-focus-within:scale-110 group-focus-within:-translate-y-0.5"><use href="#icon-user"></use></svg>
                             </div>
                             <input type="text" id="destinatario" required 
-                                class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100 text-sm rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all placeholder-zinc-400 font-medium"
+                                class="w-full bg-skin-input border border-skin-border text-skin-text text-sm rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-skin-accent/20 focus:border-skin-accent transition-all placeholder-gray-400 font-medium"
                                 placeholder="Nome ou Empresa">
                         </div>
                     </div>
 
                     <div class="space-y-1.5">
-                        <!-- Alterado de "Pedido / PO" para "Número do Pedido" -->
-                        <label class="text-[11px] uppercase tracking-wider font-bold text-zinc-500 dark:text-zinc-400 pl-1">Número do Pedido</label>
+                        <label class="text-[11px] uppercase tracking-wider font-bold text-skin-muted pl-1">Número do Pedido</label>
                         <div class="relative group">
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <svg class="h-4 w-4 text-zinc-400 group-focus-within:text-brand-500 transition-all duration-300 group-focus-within:scale-110 group-focus-within:-translate-y-0.5"><use href="#icon-hash"></use></svg>
+                                <svg class="h-4 w-4 text-skin-muted group-focus-within:text-skin-accent transition-all duration-300 group-focus-within:scale-110 group-focus-within:-translate-y-0.5"><use href="#icon-hash"></use></svg>
                             </div>
                             <input type="text" id="pedido" required 
-                                class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100 text-sm rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all placeholder-zinc-400 font-mono"
+                                class="w-full bg-skin-input border border-skin-border text-skin-text text-sm rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-skin-accent/20 focus:border-skin-accent transition-all placeholder-gray-400 font-mono"
                                 placeholder="Ex: 63096">
                         </div>
                     </div>
 
                     <div class="space-y-1.5">
-                        <label class="text-[11px] uppercase tracking-wider font-bold text-zinc-500 dark:text-zinc-400 pl-1">Cidade</label>
+                        <label class="text-[11px] uppercase tracking-wider font-bold text-skin-muted pl-1">Cidade</label>
                         <div class="relative group">
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <svg class="h-4 w-4 text-zinc-400 group-focus-within:text-brand-500 transition-all duration-300 group-focus-within:scale-110 group-focus-within:-translate-y-0.5"><use href="#icon-map"></use></svg>
+                                <svg class="h-4 w-4 text-skin-muted group-focus-within:text-skin-accent transition-all duration-300 group-focus-within:scale-110 group-focus-within:-translate-y-0.5"><use href="#icon-map"></use></svg>
                             </div>
                             <input type="text" id="cidade" required 
-                                class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100 text-sm rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all placeholder-zinc-400"
+                                class="w-full bg-skin-input border border-skin-border text-skin-text text-sm rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-skin-accent/20 focus:border-skin-accent transition-all placeholder-gray-400"
                                 placeholder="São Paulo - SP">
                         </div>
                     </div>
 
-                    <!-- Ajustado gap para 3 e padding interno dos inputs para ganhar espaço horizontal -->
                     <div class="grid grid-cols-2 gap-3">
                         <div class="space-y-1.5">
-                            <label class="text-[11px] uppercase tracking-wider font-bold text-zinc-500 dark:text-zinc-400 pl-1">Volumes</label>
+                            <label class="text-[11px] uppercase tracking-wider font-bold text-skin-muted pl-1">Volumes</label>
                             <div class="relative group">
                                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <svg class="h-4 w-4 text-zinc-400 group-focus-within:text-brand-500 transition-all duration-300 group-focus-within:scale-110 group-focus-within:-translate-y-0.5"><use href="#icon-box"></use></svg>
+                                    <svg class="h-4 w-4 text-skin-muted group-focus-within:text-skin-accent transition-all duration-300 group-focus-within:scale-110 group-focus-within:-translate-y-0.5"><use href="#icon-box"></use></svg>
                                 </div>
                                 <input type="number" id="volumes" required min="1" value="1"
-                                    class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100 text-sm rounded-xl pl-9 pr-2 py-3 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all font-mono">
+                                    class="w-full bg-skin-input border border-skin-border text-skin-text text-sm rounded-xl pl-9 pr-2 py-3 focus:outline-none focus:ring-2 focus:ring-skin-accent/20 focus:border-skin-accent transition-all font-mono">
                             </div>
                         </div>
                         <div class="space-y-1.5">
-                            <label class="text-[11px] uppercase tracking-wider font-bold text-zinc-500 dark:text-zinc-400 pl-1">Data</label>
+                            <label class="text-[11px] uppercase tracking-wider font-bold text-skin-muted pl-1">Data</label>
                             <div class="relative group">
                                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <svg class="h-4 w-4 text-zinc-400 group-focus-within:text-brand-500 transition-all duration-300 group-focus-within:scale-110 group-focus-within:-translate-y-0.5"><use href="#icon-calendar"></use></svg>
+                                    <svg class="h-4 w-4 text-skin-muted group-focus-within:text-skin-accent transition-all duration-300 group-focus-within:scale-110 group-focus-within:-translate-y-0.5"><use href="#icon-calendar"></use></svg>
                                 </div>
-                                <!-- Reduzido padding lateral (pl-9, pr-1) e tamanho da fonte (text-[13px]) para evitar corte -->
                                 <input type="date" id="form-date" required 
-                                    class="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100 text-[13px] rounded-xl pl-9 pr-1 py-3 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all">
+                                    class="w-full bg-skin-input border border-skin-border text-skin-text text-[13px] rounded-xl pl-9 pr-1 py-3 focus:outline-none focus:ring-2 focus:ring-skin-accent/20 focus:border-skin-accent transition-all">
                             </div>
                         </div>
                     </div>
 
                     <div class="pt-4 space-y-3">
-                        <button type="button" id="btn-limpar"
-                            class="w-full py-3.5 bg-zinc-100 hover:bg-zinc-200 text-zinc-600 font-medium rounded-xl transition-colors dark:bg-zinc-800 dark:hover:bg-zinc-700 dark:text-zinc-300">
+                         <button type="button" id="btn-limpar"
+                            class="w-full py-3.5 bg-skin-input hover:bg-skin-border text-skin-muted font-medium rounded-xl transition-colors border border-transparent hover:border-skin-border">
                             Limpar Campos e Reiniciar
                         </button>
                     </div>
                 </form>
             </div>
 
-            <!-- Footer Sidebar: Info -->
-            <div class="p-4 bg-zinc-50 dark:bg-black/20 text-center border-t border-zinc-100 dark:border-zinc-800">
-                 <p class="text-[10px] text-zinc-400">Sistema otimizado para impressão de alto volume.</p>
+            <!-- Footer -->
+            <div class="p-4 bg-skin-input border-t border-skin-border text-center">
+                 <p class="text-[10px] text-skin-muted">Sistema otimizado para impressão de alto volume.</p>
             </div>
         </aside>
 
-        <!-- MAIN CONTENT: Canvas (Grid Pattern do código fornecido) -->
-        <!-- Aumentado duration para 1000ms -->
+        <!-- MAIN CONTENT -->
         <main id="main-content" class="flex-1 flex flex-col h-full relative overflow-hidden bg-grid-pattern transition-colors duration-1000">
             
-            <!-- Floating Toolbar (Adaptado para o novo layout) -->
-            <!-- Adicionada classe 'no-print' para esconder na impressão -->
-            <div id="print-toolbar" class="absolute top-6 left-1/2 -translate-x-1/2 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md border border-zinc-200/50 dark:border-zinc-800/50 shadow-xl shadow-zinc-200/20 dark:shadow-none rounded-full p-1.5 flex items-center gap-2 z-40 transition-all hover:scale-105 no-print">
+            <!-- Toolbar -->
+            <div id="print-toolbar" class="absolute top-6 left-1/2 -translate-x-1/2 bg-skin-sidebar/80 backdrop-blur-md border border-skin-border shadow-xl rounded-full p-1.5 flex items-center gap-2 z-40 transition-all hover:scale-105 no-print">
                 
-                <div class="flex bg-zinc-100 dark:bg-zinc-950 rounded-full p-1">
-                    <button id="btn-a4" class="px-5 py-2 text-[11px] font-bold rounded-full transition-all shadow-sm bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white uppercase tracking-wide" data-mode="a4">Folha A4</button>
-                    <button id="btn-thermal" class="px-5 py-2 text-[11px] font-bold rounded-full transition-all text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 uppercase tracking-wide" data-mode="thermal">Térmica</button>
+                <div class="flex bg-skin-input rounded-full p-1">
+                    <button id="btn-a4" class="px-5 py-2 text-[11px] font-bold rounded-full transition-all shadow-sm bg-skin-sidebar text-skin-text uppercase tracking-wide" data-mode="a4">Folha A4</button>
+                    <button id="btn-thermal" class="px-5 py-2 text-[11px] font-bold rounded-full transition-all text-skin-muted hover:text-skin-text uppercase tracking-wide" data-mode="thermal">Térmica</button>
                 </div>
 
-                <div class="w-px h-6 bg-zinc-200 dark:bg-zinc-800"></div>
+                <div class="w-px h-6 bg-skin-border"></div>
 
-                <button id="btn-print-toolbar" class="w-10 h-10 flex items-center justify-center text-zinc-700 dark:text-zinc-200 hover:bg-brand-500 hover:text-white dark:hover:bg-brand-500 rounded-full transition-all duration-300 group" title="Imprimir (Ctrl+P)">
+                <button id="btn-print-toolbar" class="w-10 h-10 flex items-center justify-center text-skin-text hover:bg-skin-accent hover:text-white rounded-full transition-all duration-300 group" title="Imprimir (Ctrl+P)">
                     <svg class="w-5 h-5 group-hover:scale-110 transition-transform"><use href="#icon-printer"></use></svg>
                 </button>
             </div>
 
-            <!-- Preview Area (Restaurado do código fornecido) -->
+            <!-- Preview -->
             <div id="preview-area" class="flex-1 overflow-y-auto overflow-x-hidden p-8 pt-24 pb-20 flex justify-center items-start">
                 
                 <div id="etiquetas-container" class="transition-opacity duration-500 ease-in-out">
-                    <!-- Empty State / Placeholder ILLUSTRATED -->
-                    <div id="placeholder" class="flex flex-col items-center justify-center h-[50vh] text-zinc-400 select-none animate-in fade-in duration-700">
+                    <!-- Placeholder -->
+                    <div id="placeholder" class="flex flex-col items-center justify-center h-[50vh] text-skin-muted select-none animate-in fade-in duration-700">
                         <div class="relative mb-6 group cursor-pointer">
-                            <div class="absolute inset-0 bg-brand-500/0 group-hover:bg-brand-500/10 dark:group-hover:bg-brand-500/20 rounded-full blur-2xl transition-all duration-500"></div>
-                            <svg class="w-40 h-40 text-zinc-200 dark:text-zinc-800 relative z-10 transition-transform duration-500 group-hover:scale-105" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <circle cx="100" cy="100" r="60" class="fill-zinc-50 dark:fill-zinc-900/50 transition-colors duration-500 group-hover:fill-white dark:group-hover:fill-zinc-900" />
-                                <rect x="60" y="70" width="80" height="60" rx="4" class="stroke-zinc-300 dark:stroke-zinc-700 transition-colors duration-500 group-hover:stroke-brand-400" stroke-width="2" stroke-dasharray="6 6" fill="none"/>
-                                
+                            <div class="absolute inset-0 bg-skin-accent/0 group-hover:bg-skin-accent/20 rounded-full blur-2xl transition-all duration-500"></div>
+                            <svg class="w-40 h-40 text-skin-text relative z-10 transition-transform duration-500 group-hover:scale-105" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="100" cy="100" r="60" class="fill-skin-input transition-colors duration-500 group-hover:fill-skin-sidebar" />
+                                <rect x="60" y="70" width="80" height="60" rx="4" class="stroke-skin-muted transition-colors duration-500 group-hover:stroke-skin-accent" stroke-width="2" stroke-dasharray="6 6" fill="none"/>
                                 <g class="opacity-100 transition-opacity duration-500">
-                                    <rect x="70" y="85" width="40" height="4" rx="2" class="fill-zinc-300 dark:fill-zinc-700 transition-colors group-hover:fill-zinc-400 dark:group-hover:fill-zinc-600" />
-                                    <rect x="70" y="95" width="60" height="4" rx="2" class="fill-zinc-300 dark:fill-zinc-700 transition-colors group-hover:fill-zinc-400 dark:group-hover:fill-zinc-600" />
-                                    <rect x="70" y="105" width="30" height="4" rx="2" class="fill-zinc-300 dark:fill-zinc-700 transition-colors group-hover:fill-zinc-400 dark:group-hover:fill-zinc-600" />
+                                    <rect x="70" y="85" width="40" height="4" rx="2" class="fill-skin-muted transition-colors group-hover:fill-skin-text" />
+                                    <rect x="70" y="95" width="60" height="4" rx="2" class="fill-skin-muted transition-colors group-hover:fill-skin-text" />
+                                    <rect x="70" y="105" width="30" height="4" rx="2" class="fill-skin-muted transition-colors group-hover:fill-skin-text" />
                                 </g>
-                                
-                                <!-- Floating Add Icon with animation -->
                                 <g class="transition-transform duration-500 group-hover:-translate-y-2 group-hover:translate-x-2">
-                                    <circle cx="130" cy="120" r="12" class="fill-white dark:fill-zinc-800 stroke-zinc-200 dark:stroke-zinc-700 transition-colors group-hover:stroke-brand-500" stroke-width="2"/>
-                                    <path d="M130 114V126M124 120H136" class="stroke-brand-500 transition-transform duration-500 group-hover:rotate-90 origin-center" stroke-width="2" stroke-linecap="round"/>
+                                    <circle cx="130" cy="120" r="12" class="fill-skin-sidebar stroke-skin-border transition-colors group-hover:stroke-skin-accent" stroke-width="2"/>
+                                    <path d="M130 114V126M124 120H136" class="stroke-skin-accent transition-transform duration-500 group-hover:rotate-90 origin-center" stroke-width="2" stroke-linecap="round"/>
                                 </g>
                             </svg>
                         </div>
@@ -421,13 +356,12 @@
     </div>
 
     <script>
-        // --- Core Utils ---
         const getStorage = (k, d) => localStorage.getItem(k) || d;
         const setStorage = (k, v) => localStorage.setItem(k, v);
 
-        // --- DOM Elements ---
         const els = {
             themeToggle: document.getElementById('theme-toggle'),
+            iconContainer: document.getElementById('theme-icon-container'),
             btnA4: document.getElementById('btn-a4'),
             btnThermal: document.getElementById('btn-thermal'),
             btnPrint: document.getElementById('btn-print-toolbar'),
@@ -443,48 +377,59 @@
             }
         };
 
-        // --- Init ---
         const initDate = () => {
             const now = new Date();
             els.dateInput.value = now.toISOString().split('T')[0];
         };
         initDate();
 
-        // --- Theme Logic ---
-        const updateTheme = (theme) => {
-            document.documentElement.classList.toggle('dark', theme === 'dark');
-            setStorage('theme', theme);
-        };
-        els.themeToggle.addEventListener('click', () => {
-            const isDark = document.documentElement.classList.contains('dark');
-            updateTheme(isDark ? 'light' : 'dark');
-        });
-        updateTheme(getStorage('theme', 'light'));
+        // --- THEME LOGIC (3 States) ---
+        const themes = ['light', 'dark', 'gruvbox'];
+        let currentThemeIndex = themes.indexOf(getStorage('theme', 'light'));
+        if(currentThemeIndex === -1) currentThemeIndex = 0;
 
-        // --- Print Mode Logic ---
+        const applyTheme = (themeName) => {
+            document.documentElement.className = themeName === 'light' ? 'antialiased' : `antialiased ${themeName}`;
+            
+            // Update Icon
+            let iconHtml = '';
+            if(themeName === 'light') {
+                iconHtml = '<svg class="w-5 h-5 text-amber-500 animate-in fade-in zoom-in duration-500"><use href="#icon-sun"></use></svg>';
+            } else if (themeName === 'dark') {
+                iconHtml = '<svg class="w-5 h-5 text-indigo-400 animate-in fade-in zoom-in duration-500"><use href="#icon-moon"></use></svg>';
+            } else {
+                iconHtml = '<svg class="w-5 h-5 text-orange-500 animate-in fade-in zoom-in duration-500"><use href="#icon-cube"></use></svg>';
+            }
+            els.iconContainer.innerHTML = iconHtml;
+            setStorage('theme', themeName);
+        };
+
+        els.themeToggle.addEventListener('click', () => {
+            currentThemeIndex = (currentThemeIndex + 1) % themes.length;
+            applyTheme(themes[currentThemeIndex]);
+        });
+        
+        applyTheme(themes[currentThemeIndex]); // Init
+
+        // --- Print Mode ---
         let currentMode = getStorage('printMode', 'a4');
         const updatePrintModeUI = (mode) => {
             currentMode = mode;
             document.body.classList.toggle('thermal-layout', mode === 'thermal');
             setStorage('printMode', mode);
 
-            // Button Styles (Adaptado para o novo design dos botões)
-            const activeClass = ['bg-white', 'dark:bg-zinc-800', 'text-zinc-900', 'dark:text-white', 'shadow-sm'];
-            const inactiveClass = ['text-zinc-500', 'hover:text-zinc-700', 'dark:text-zinc-400', 'bg-transparent', 'shadow-none'];
+            const activeClass = ['bg-skin-sidebar', 'text-skin-text', 'shadow-sm'];
+            const inactiveClass = ['text-skin-muted', 'hover:text-skin-text', 'bg-transparent', 'shadow-none'];
 
             const setBtn = (btn, isActive) => {
-                btn.classList.remove(...activeClass, ...inactiveClass);
-                btn.classList.add(...(isActive ? activeClass : inactiveClass));
+                btn.className = `px-5 py-2 text-[11px] font-bold rounded-full transition-all uppercase tracking-wide ${isActive ? activeClass.join(' ') : inactiveClass.join(' ')}`;
             };
 
             setBtn(els.btnA4, mode === 'a4');
             setBtn(els.btnThermal, mode === 'thermal');
 
             if (els.container.querySelector('.etiqueta')) {
-                // If placeholder is not visible, refresh visual
-                if (!document.getElementById('placeholder')) {
-                     generateLabels(false);
-                }
+                if (!document.getElementById('placeholder')) generateLabels(false);
             }
         };
 
@@ -492,142 +437,82 @@
         els.btnThermal.addEventListener('click', () => updatePrintModeUI('thermal'));
         updatePrintModeUI(currentMode);
 
-        // --- TOAST NOTIFICATION SYSTEM ---
         const showToast = (message, type = 'default') => {
             const toast = document.createElement('div');
             toast.className = `fixed bottom-6 right-6 z-50 flex items-center gap-3 px-5 py-3.5 
-                               bg-white/90 dark:bg-zinc-800/90 backdrop-blur-md 
-                               border border-zinc-200 dark:border-zinc-700 
-                               rounded-xl shadow-2xl shadow-zinc-500/20 dark:shadow-black/50
-                               transform transition-all duration-500 ease-out translate-y-20 opacity-0
-                               no-print`;
-            
+                               bg-skin-sidebar/90 backdrop-blur-md border border-skin-border 
+                               rounded-xl shadow-2xl transform transition-all duration-500 ease-out translate-y-20 opacity-0 no-print`;
             toast.innerHTML = `
-                <div class="w-2 h-2 rounded-full ${type === 'error' ? 'bg-red-500' : 'bg-brand-500'} animate-pulse"></div>
-                <span class="text-sm font-medium text-zinc-700 dark:text-zinc-200">${message}</span>
+                <div class="w-2 h-2 rounded-full ${type === 'error' ? 'bg-red-500' : 'bg-skin-accent'} animate-pulse"></div>
+                <span class="text-sm font-medium text-skin-text">${message}</span>
             `;
-
             document.body.appendChild(toast);
-            requestAnimationFrame(() => { toast.classList.remove('translate-y-20', 'opacity-0'); });
+            requestAnimationFrame(() => toast.classList.remove('translate-y-20', 'opacity-0'));
             setTimeout(() => {
                 toast.classList.add('translate-y-20', 'opacity-0');
                 setTimeout(() => toast.remove(), 500);
             }, 3000);
         };
 
-        // --- JIT Engine & State ---
-        // Keeps track of rendered volume to avoid re-rendering structure when only text changes
-        let renderedVol = 0;
+        const generateLabels = (incrementCounter = true) => {
+            const data = {
+                dest: els.inputs.dest.value,
+                ped: els.inputs.ped.value,
+                cid: els.inputs.cid.value,
+                vol: parseInt(els.inputs.vol.value, 10),
+                dateRaw: els.dateInput.value
+            };
 
-        const renderStructure = (vol) => {
-            // Re-builds the container pages and labels
-            els.container.innerHTML = '';
-            els.container.classList.remove('opacity-0');
-            
-            const LABELS_PER_PAGE = currentMode === 'a4' ? 10 : 1;
+            if (!data.dest || !data.ped || !data.cid || isNaN(data.vol) || data.vol < 1) return;
 
-            for (let i = 1; i <= vol; i++) {
-                let pageIndex = Math.ceil(i / LABELS_PER_PAGE);
-                let page = els.container.querySelector(`.page-container-screen:nth-child(${pageIndex})`);
-                
-                if (!page) {
-                    page = document.createElement('div');
-                    // Add animate-in class only here to animate newly created structure
-                    // Modified: added dark:bg-transparent dark:shadow-none to remove white paper look in dark mode
-                    page.className = 'page-container-screen page-container-print bg-white dark:bg-transparent dark:shadow-none shadow-sm animate-in fade-in zoom-in-95 duration-500'; 
-                    if(currentMode === 'thermal') page.className = 'page-container-screen page-container-print';
-                    els.container.appendChild(page);
-                }
-
-                const html = `
-                    <div class="etiqueta p-3 flex flex-col h-full border border-slate-200 bg-white" id="label-${i}">
-                        <input type="text" class="data-stamp" data-field="date" tabindex="-1" title="Edite a data se necessário">
-                        
-                        <div class="relative z-10 flex flex-col h-full">
-                            <div class="flex justify-between items-start mb-2">
-                                <h3 class="text-xl font-bold w-3/4 leading-tight text-black" data-field="dest"></h3>
-                                <div class="volume-box bg-black text-white text-center p-1 px-3 rounded-md">
-                                    <span class="font-bold text-xl" data-field="vol_count"></span>
-                                </div>
-                            </div>
-                            
-                            <div class="flex-grow space-y-1 mt-1">
-                                <p class="text-base text-black"><span class="font-bold text-slate-600">Pedido:</span> <span data-field="ped"></span></p>
-                                <p class="text-base text-black"><span class="font-bold text-slate-600">Destino:</span> <span data-field="cid"></span></p>
-                            </div>
-                            
-                            <div class="border-t-2 border-dashed border-slate-300 pt-1 text-center mt-3">
-                                <p class="font-bold text-xs text-black uppercase tracking-wide" data-field="footer"></p>
-                            </div>
-                        </div>
-                    </div>
-                `;
-                page.insertAdjacentHTML('beforeend', html);
-            }
-            renderedVol = vol;
-        };
-
-        const updateContent = (data) => {
-            // Efficiently updates text without touching DOM structure
             let displayDate = data.dateRaw;
             if (data.dateRaw && data.dateRaw.includes('-')) {
                 const [y, m, d] = data.dateRaw.split('-');
                 displayDate = `${d}/${m}/${y}`;
             }
 
-            // Fallbacks for empty state preview
-            const destText = data.dest || "NOME DO CLIENTE";
-            const pedText = data.ped || "---";
-            const cidText = data.cid || "---";
-
-            const labels = els.container.querySelectorAll('.etiqueta');
-            labels.forEach((label, index) => {
-                const i = index + 1;
-                label.querySelector('[data-field="date"]').value = displayDate;
-                label.querySelector('[data-field="dest"]').textContent = destText;
-                label.querySelector('[data-field="vol_count"]').textContent = `${i}/${data.vol}`;
-                label.querySelector('[data-field="ped"]').textContent = pedText;
-                label.querySelector('[data-field="cid"]').textContent = cidText;
-                label.querySelector('[data-field="footer"]').textContent = `VOLUME ${i} DE ${data.vol}`;
-            });
-        };
-
-        // Main JIT Controller
-        const updatePreview = () => {
-            const volStr = els.inputs.vol.value;
-            // Basic validation for preview: allow typing but require at least 1 volume
-            const vol = (volStr && !isNaN(volStr) && parseInt(volStr) > 0) ? parseInt(volStr) : 1;
+            els.container.innerHTML = '';
+            els.container.classList.remove('opacity-0');
             
-            const data = {
-                dest: els.inputs.dest.value,
-                ped: els.inputs.ped.value,
-                cid: els.inputs.cid.value,
-                vol: vol,
-                dateRaw: els.dateInput.value
-            };
+            const LABELS_PER_PAGE = currentMode === 'a4' ? 10 : 1;
 
-            // If user hasn't typed anything meaningful yet, check if we have any data to show.
-            if (document.getElementById('placeholder')) {
-                const hasData = data.dest || data.ped || data.cid;
-                if (!hasData) return; // Keep placeholder until some data exists
+            for (let i = 1; i <= data.vol; i++) {
+                let pageIndex = Math.ceil(i / LABELS_PER_PAGE);
+                let page = els.container.querySelector(`.page-container-screen:nth-child(${pageIndex})`);
+                
+                if (!page) {
+                    page = document.createElement('div');
+                    page.className = 'page-container-screen page-container-print bg-transparent shadow-none animate-in fade-in zoom-in-95 duration-500'; 
+                    if(currentMode === 'thermal') page.className = 'page-container-screen page-container-print';
+                    els.container.appendChild(page);
+                }
+
+                const html = `
+                    <div class="etiqueta p-3 flex flex-col h-full border border-slate-200 bg-white">
+                        <input type="text" class="data-stamp" value="${displayDate}" tabindex="-1" title="Edite a data se necessário">
+                        
+                        <div class="relative z-10 flex flex-col h-full">
+                            <div class="flex justify-between items-start mb-2">
+                                <h3 class="text-xl font-bold w-3/4 leading-tight text-black">${data.dest}</h3>
+                                <div class="volume-box bg-black text-white text-center p-1 px-3 rounded-md">
+                                    <span class="font-bold text-xl">${i}/${data.vol}</span>
+                                </div>
+                            </div>
+                            <div class="flex-grow space-y-1 mt-1">
+                                <p class="text-base text-black"><span class="font-bold text-slate-600">Pedido:</span> ${data.ped}</p>
+                                <p class="text-base text-black"><span class="font-bold text-slate-600">Destino:</span> ${data.cid}</p>
+                            </div>
+                            <div class="border-t-2 border-dashed border-slate-300 pt-1 text-center mt-3">
+                                <p class="font-bold text-xs text-black uppercase tracking-wide">VOLUME ${i} DE ${data.vol}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                page.insertAdjacentHTML('beforeend', html);
             }
-
-            // Structure Update (if volume changed)
-            if (vol !== renderedVol || document.getElementById('placeholder')) {
-                renderStructure(vol);
-            }
-
-            // Content Update (Always)
-            updateContent(data);
+            if (incrementCounter) showToast(`Etiquetas atualizadas!`);
         };
 
-        // Used for the button manual trigger (just toast and maybe full re-render)
-        const generateLabels = (incrementCounter = true) => {
-             updatePreview();
-             if (incrementCounter) showToast(`Etiquetas atualizadas!`);
-        };
-
-        // --- Setup Listeners ---
         const debounce = (fn, delay) => {
             let timeoutId;
             return (...args) => {
@@ -635,45 +520,33 @@
                 timeoutId = setTimeout(() => fn(...args), delay);
             };
         };
+        const jitHandler = debounce(() => generateLabels(false), 50);
+        Object.values(els.inputs).forEach(input => input.addEventListener('input', jitHandler));
+        els.dateInput.addEventListener('change', jitHandler);
 
-        // Attach input listeners for JIT
-        const jitHandler = debounce(updatePreview, 50); // Fast debounce for responsiveness
-        
-        Object.values(els.inputs).forEach(input => {
-            input.addEventListener('input', jitHandler);
-        });
-        els.dateInput.addEventListener('change', jitHandler); // Date input might use change
-
-        // Keep form submit for manual trigger/validation check
         let isSubmitting = false;
         els.form.addEventListener('submit', (e) => {
             e.preventDefault();
-            if (isSubmitting) return;
-            
-            // Just manual refresh visual feedback
-            generateLabels(true); 
         });
 
-        // Clear
         els.btnLimpar.addEventListener('click', () => {
             els.form.reset();
             initDate();
-            renderedVol = 0; // Reset state
             els.container.innerHTML = `
-                <div id="placeholder" class="flex flex-col items-center justify-center h-[40vh] text-zinc-400 select-none animate-in fade-in duration-700">
+                <div id="placeholder" class="flex flex-col items-center justify-center h-[40vh] text-skin-muted select-none animate-in fade-in duration-700">
                     <div class="relative mb-6 group cursor-pointer">
-                        <div class="absolute inset-0 bg-brand-500/0 group-hover:bg-brand-500/10 dark:group-hover:bg-brand-500/20 rounded-full blur-2xl transition-all duration-500"></div>
-                        <svg class="w-40 h-40 text-zinc-200 dark:text-zinc-800 relative z-10 transition-transform duration-500 group-hover:scale-105" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="100" cy="100" r="60" class="fill-zinc-50 dark:fill-zinc-900/50 transition-colors duration-500 group-hover:fill-white dark:group-hover:fill-zinc-900" />
-                            <rect x="60" y="70" width="80" height="60" rx="4" class="stroke-zinc-300 dark:stroke-zinc-700 transition-colors duration-500 group-hover:stroke-brand-400" stroke-width="2" stroke-dasharray="6 6" fill="none"/>
+                        <div class="absolute inset-0 bg-skin-accent/0 group-hover:bg-skin-accent/20 rounded-full blur-2xl transition-all duration-500"></div>
+                        <svg class="w-40 h-40 text-skin-text relative z-10 transition-transform duration-500 group-hover:scale-105" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="100" cy="100" r="60" class="fill-skin-input transition-colors duration-500 group-hover:fill-skin-sidebar" />
+                            <rect x="60" y="70" width="80" height="60" rx="4" class="stroke-skin-muted transition-colors duration-500 group-hover:stroke-skin-accent" stroke-width="2" stroke-dasharray="6 6" fill="none"/>
                             <g class="opacity-100 transition-opacity duration-500">
-                                <rect x="70" y="85" width="40" height="4" rx="2" class="fill-zinc-300 dark:fill-zinc-700 transition-colors group-hover:fill-zinc-400 dark:group-hover:fill-zinc-600" />
-                                <rect x="70" y="95" width="60" height="4" rx="2" class="fill-zinc-300 dark:fill-zinc-700 transition-colors group-hover:fill-zinc-400 dark:group-hover:fill-zinc-600" />
-                                <rect x="70" y="105" width="30" height="4" rx="2" class="fill-zinc-300 dark:fill-zinc-700 transition-colors group-hover:fill-zinc-400 dark:group-hover:fill-zinc-600" />
+                                <rect x="70" y="85" width="40" height="4" rx="2" class="fill-skin-muted transition-colors group-hover:fill-skin-text" />
+                                <rect x="70" y="95" width="60" height="4" rx="2" class="fill-skin-muted transition-colors group-hover:fill-skin-text" />
+                                <rect x="70" y="105" width="30" height="4" rx="2" class="fill-skin-muted transition-colors group-hover:fill-skin-text" />
                             </g>
                             <g class="transition-transform duration-500 group-hover:-translate-y-2 group-hover:translate-x-2">
-                                <circle cx="130" cy="120" r="12" class="fill-white dark:fill-zinc-800 stroke-zinc-200 dark:stroke-zinc-700 transition-colors group-hover:stroke-brand-500" stroke-width="2"/>
-                                <path d="M130 114V126M124 120H136" class="stroke-brand-500 transition-transform duration-500 group-hover:rotate-90 origin-center" stroke-width="2" stroke-linecap="round"/>
+                                <circle cx="130" cy="120" r="12" class="fill-skin-sidebar stroke-skin-border transition-colors group-hover:stroke-skin-accent" stroke-width="2"/>
+                                <path d="M130 114V126M124 120H136" class="stroke-skin-accent transition-transform duration-500 group-hover:rotate-90 origin-center" stroke-width="2" stroke-linecap="round"/>
                             </g>
                         </svg>
                     </div>
@@ -682,7 +555,6 @@
             showToast("Formulário limpo.", "default");
         });
 
-        // Print Button
         els.btnPrint.addEventListener('click', () => {
             if (!els.container.querySelector('.etiqueta')) {
                 const btn = els.btnPrint;
@@ -694,19 +566,13 @@
             window.print();
         });
 
-        // GLOBAL HOTKEYS
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') els.btnLimpar.click();
-            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
-                e.preventDefault();
-                if (!isSubmitting) generateLabels(true);
-            }
             if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
                 e.preventDefault();
                 els.btnPrint.click();
             }
         });
-
     </script>
 </body>
 </html>
