@@ -517,7 +517,11 @@
                 dateRaw: els.dateInput.value
             };
 
-            if (!data.dest || !data.ped || !data.cid || isNaN(data.vol) || data.vol < 1) return;
+            // Permite gerar a etiqueta se houver QUALQUER dado preenchido
+            if (!data.dest && !data.ped && !data.cid) return;
+
+            // Garante que o volume seja pelo menos 1 para não quebrar a lógica
+            if (isNaN(data.vol) || data.vol < 1) data.vol = 1;
 
             let displayDate = data.dateRaw;
             if (data.dateRaw && data.dateRaw.includes('-')) {
@@ -541,21 +545,21 @@
                     els.container.appendChild(page);
                 }
 
-                // ADICIONADO: O padding p-4 de volta na div principal ".etiqueta" para o layout não colar nas bordas
+                // Usando &nbsp; para espaços em branco caso o campo não esteja preenchido, mantendo a estrutura da etiqueta firme
                 const html = `
                     <div class="etiqueta p-4 flex flex-col h-full border border-slate-200 bg-white">
                         <input type="text" class="data-stamp" value="${displayDate}" tabindex="-1" title="Edite a data se necessário">
                         
                         <div class="relative z-10 flex flex-col h-full w-full justify-between">
                             <div class="flex justify-between items-start w-full">
-                                <h3 class="text-xl font-bold w-3/4 leading-tight text-black">${data.dest}</h3>
+                                <h3 class="text-xl font-bold w-3/4 leading-tight text-black">${data.dest || '&nbsp;'}</h3>
                                 <div class="volume-box bg-black text-white text-center p-1 px-3 rounded-md">
                                     <span class="font-bold text-xl">${i}/${data.vol}</span>
                                 </div>
                             </div>
                             <div class="flex-grow flex flex-col justify-center w-full space-y-1 mt-2 mb-2">
-                                <p class="text-base text-black leading-tight"><span class="font-bold text-slate-600">Pedido:</span> ${data.ped}</p>
-                                <p class="text-base text-black leading-tight"><span class="font-bold text-slate-600">Destino:</span> ${data.cid}</p>
+                                <p class="text-base text-black leading-tight"><span class="font-bold text-slate-600">Pedido:</span> ${data.ped || '&nbsp;'}</p>
+                                <p class="text-base text-black leading-tight"><span class="font-bold text-slate-600">Destino:</span> ${data.cid || '&nbsp;'}</p>
                             </div>
                             <div class="border-t-2 border-dashed border-slate-300 w-full pt-1 text-center mt-auto">
                                 <p class="font-bold text-[11px] text-black uppercase tracking-wide">VOLUME ${i} DE ${data.vol}</p>
