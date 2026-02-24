@@ -155,7 +155,8 @@
         body.thermal-layout .page-container-screen {
             display: flex; flex-direction: column; align-items: center; gap: 1rem; padding: 1rem;
         }
-        body.thermal-layout .etiqueta { width: 80mm; min-height: 45mm; height: auto; }
+        /* Tamanho de tela 9x5cm da etiqueta zebra */
+        body.thermal-layout .etiqueta { width: 9cm; height: 5cm; }
 
         /* --- IMPRESSÃO --- */
         @media print {
@@ -182,7 +183,8 @@
             body:not(.thermal-layout) .etiqueta { width: 8.5cm !important; height: 4.5cm !important; }
 
             body.thermal-layout .page-container-print { display: block; margin: 0; }
-            body.thermal-layout .etiqueta { width: 78mm !important; margin: 0; padding: 4mm; border: none !important; page-break-after: always; }
+            /* Tamanho de impressão 9x5cm da etiqueta zebra */
+            body.thermal-layout .etiqueta { width: 9cm !important; height: 5cm !important; margin: 0; padding: 4mm; border: none !important; page-break-after: always; }
         }
     </style>
 </head>
@@ -315,7 +317,7 @@
                 
                 <div class="flex bg-skin-input rounded-full p-1">
                     <button id="btn-a4" class="px-5 py-2 text-[11px] font-bold rounded-full transition-all shadow-sm bg-skin-sidebar text-skin-text uppercase tracking-wide" data-mode="a4">Folha A4</button>
-                    <button id="btn-thermal" class="px-5 py-2 text-[11px] font-bold rounded-full transition-all text-skin-muted hover:text-skin-text uppercase tracking-wide" data-mode="thermal">Térmica</button>
+                    <button id="btn-thermal" class="px-5 py-2 text-[11px] font-bold rounded-full transition-all text-skin-muted hover:text-skin-text uppercase tracking-wide" data-mode="thermal">Etiqueta Zebra</button>
                 </div>
 
                 <div class="w-px h-6 bg-skin-border"></div>
