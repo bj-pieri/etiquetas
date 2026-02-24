@@ -160,8 +160,7 @@
 
         /* --- IMPRESSÃO --- */
         @media print {
-            @page { margin: 0.5cm; size: auto; }
-            html, body { height: auto !important; overflow: visible !important; background: white !important; width: 100% !important; margin: 0 !important; padding: 0 !important; }
+            html, body { height: 100% !important; overflow: visible !important; background: white !important; width: 100% !important; margin: 0 !important; padding: 0 !important; }
             .no-print { display: none !important; }
             #app-wrapper, #main-content, #preview-area, #etiquetas-container { display: block !important; height: auto !important; overflow: visible !important; width: 100% !important; margin: 0 !important; padding: 0 !important; position: static !important; }
             #preview-area { background: none !important; }
@@ -176,15 +175,29 @@
             .data-stamp { opacity: 1 !important; border: none !important; background: none !important; }
             .volume-box { background-color: #000 !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
 
+            /* A4 Mode */
             body:not(.thermal-layout) .page-container-print {
-                display: grid; grid-template-columns: repeat(2, 8.5cm); gap: 0.3cm; margin: 0 auto; page-break-after: always; break-after: page; width: fit-content; max-width: 100%;
+                display: grid; grid-template-columns: repeat(2, 8.5cm); gap: 0.3cm; margin: 0 auto; page-break-after: always; break-after: page; width: fit-content; max-width: 100%; padding: 0.5cm;
             }
             body:not(.thermal-layout) .page-container-print:last-child { page-break-after: auto; break-after: auto; }
             body:not(.thermal-layout) .etiqueta { width: 8.5cm !important; height: 4.5cm !important; }
 
-            body.thermal-layout .page-container-print { display: block; margin: 0; }
-            /* Tamanho de impressão 9x5cm da etiqueta zebra */
-            body.thermal-layout .etiqueta { width: 9cm !important; height: 5cm !important; margin: 0; padding: 4mm; border: none !important; page-break-after: always; }
+            /* Thermal (Zebra) Mode */
+            body.thermal-layout .page-container-print { 
+                display: flex; justify-content: center; align-items: center; 
+                width: 100vw; height: 100vh; /* Se ajusta ao tamanho dinâmico do @page */
+                margin: 0; padding: 0; 
+                page-break-after: always; break-after: page; 
+                overflow: hidden;
+            }
+            /* Previne a impressão de uma página extra no final */
+            body.thermal-layout .page-container-print:last-child { page-break-after: auto; break-after: auto; }
+            
+            body.thermal-layout .etiqueta { 
+                width: 100% !important; height: 100% !important; 
+                margin: 0 !important; padding: 4mm !important; 
+                border: none !important; border-radius: 0 !important;
+            }
         }
     </style>
 </head>
@@ -430,6 +443,19 @@
             setBtn(els.btnA4, mode === 'a4');
             setBtn(els.btnThermal, mode === 'thermal');
 
+            // Injeta a tag @page dinamicamente para garantir zero margens e tamanho exato na impressora Zebra
+            let printStyle = document.getElementById('dynamic-print-style');
+            if (!printStyle) {
+                printStyle = document.createElement('style');
+                printStyle.id = 'dynamic-print-style';
+                document.head.appendChild(printStyle);
+            }
+            if (mode === 'thermal') {
+                printStyle.innerHTML = '@media print { @page { size: 90mm 50mm; margin: 0; } }';
+            } else {
+                printStyle.innerHTML = '@media print { @page { size: A4; margin: 0.5cm; } }';
+            }
+
             if (els.container.querySelector('.etiqueta')) {
                 if (!document.getElementById('placeholder')) generateLabels(false);
             }
@@ -489,23 +515,24 @@
                     els.container.appendChild(page);
                 }
 
+                // Ajustado o flexbox da etiqueta para garantir que o conteúdo fique perfeitamente centralizado e distribuído
                 const html = `
-                    <div class="etiqueta p-3 flex flex-col h-full border border-slate-200 bg-white">
+                    <div class="etiqueta p-4 flex flex-col h-full border border-slate-200 bg-white">
                         <input type="text" class="data-stamp" value="${displayDate}" tabindex="-1" title="Edite a data se necessário">
                         
-                        <div class="relative z-10 flex flex-col h-full">
-                            <div class="flex justify-between items-start mb-2">
+                        <div class="relative z-10 flex flex-col h-full justify-between">
+                            <div class="flex justify-between items-start">
                                 <h3 class="text-xl font-bold w-3/4 leading-tight text-black">${data.dest}</h3>
                                 <div class="volume-box bg-black text-white text-center p-1 px-3 rounded-md">
                                     <span class="font-bold text-xl">${i}/${data.vol}</span>
                                 </div>
                             </div>
-                            <div class="flex-grow space-y-1 mt-1">
-                                <p class="text-base text-black"><span class="font-bold text-slate-600">Pedido:</span> ${data.ped}</p>
-                                <p class="text-base text-black"><span class="font-bold text-slate-600">Destino:</span> ${data.cid}</p>
+                            <div class="flex-grow flex flex-col justify-center space-y-1">
+                                <p class="text-base text-black leading-tight"><span class="font-bold text-slate-600">Pedido:</span> ${data.ped}</p>
+                                <p class="text-base text-black leading-tight"><span class="font-bold text-slate-600">Destino:</span> ${data.cid}</p>
                             </div>
-                            <div class="border-t-2 border-dashed border-slate-300 pt-1 text-center mt-3">
-                                <p class="font-bold text-xs text-black uppercase tracking-wide">VOLUME ${i} DE ${data.vol}</p>
+                            <div class="border-t-2 border-dashed border-slate-300 pt-1 text-center mt-auto">
+                                <p class="font-bold text-[11px] text-black uppercase tracking-wide">VOLUME ${i} DE ${data.vol}</p>
                             </div>
                         </div>
                     </div>
