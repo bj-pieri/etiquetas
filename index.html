@@ -541,9 +541,9 @@
                     els.container.appendChild(page);
                 }
 
-                // Ajustado o HTML da etiqueta com classes utilitárias w-full explícitas para o conteúdo ocupar toda a largura e não encolher 
+                // ADICIONADO: O padding p-4 de volta na div principal ".etiqueta" para o layout não colar nas bordas
                 const html = `
-                    <div class="etiqueta flex flex-col h-full border border-slate-200 bg-white">
+                    <div class="etiqueta p-4 flex flex-col h-full border border-slate-200 bg-white">
                         <input type="text" class="data-stamp" value="${displayDate}" tabindex="-1" title="Edite a data se necessário">
                         
                         <div class="relative z-10 flex flex-col h-full w-full justify-between">
